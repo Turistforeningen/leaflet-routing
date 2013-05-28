@@ -87,7 +87,7 @@
             JSON.parse(data)
             routes.addData(JSON.parse(data));
           } catch(e) {
-            console.log('Could not parse JSON');
+            // console.log('Could not parse JSON');
           }
         }, 'jsonp');
       }    
