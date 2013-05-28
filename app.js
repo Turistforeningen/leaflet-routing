@@ -4,7 +4,6 @@
     var waypoints = [];
     
     var router = window.location.hash.substr(1) || 'localhost';
-    var areaUrl = 'http://www2.turistforeningen.no/admin/ajax/area.php';
     var topo = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
       maxZoom: 16,
       attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
@@ -64,30 +63,33 @@
     });
     map.addControl(drawControl);
     
-    function tryToRoute() {
-      console.log(markers._layers);
-      if (waypoints.length > 1) {
+    function tryToRoute() {      
+      var keys = Object.keys(markers._layers);
+      if (keys.length > 1) {
+
         var latlngs = '';
-        for (var i = 0; i < waypoints.length; i++) {
-          if (i > 0) { latlngs += ','; }
-          latlngs += waypoints[i][0] + ',' + waypoints[i][1];
+        for (var i = 0; i < keys.length; i++) {
+           if (i > 0) { latlngs += ','; }
+          var m = markers._layers[keys[i]];
+          latlngs += m.getLatLng().lng + ',' + m.getLatLng().lat;
         }
+
         var url = 'http://' + router + '/route/?coords=' + latlngs + '&callback=?';
         $.get(url, function(data) {
+          routes.clearLayers()
           try {
             JSON.parse(data)
             routes.addData(JSON.parse(data));
           } catch(e) {
             console.log('Could not parse JSON');
-            routes.clearLayers()
           }
         }, 'jsonp');
       }    
     };
     
     map.on('draw:created', function (e) {
-      console.log('draw:created', e);
-      waypoints.push([e.layer.getLatLng().lng, e.layer.getLatLng().lat])
+      // console.log('draw:created', e);
+      // waypoints.push([e.layer.getLatLng().lng, e.layer.getLatLng().lat])
       markers.addLayer(e.layer);
       tryToRoute();
             
