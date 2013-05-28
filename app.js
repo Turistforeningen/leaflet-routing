@@ -69,25 +69,22 @@
     });
     map.addControl(drawControl);
     
-    function tryToRoute() {      
+    function tryToRoute( append ) {
+      var append = append || false;
+          
       var keys = Object.keys(markers._layers);
       if (keys.length > 1) {
-
-        var latlngs = '';
-        for (var i = 0; i < keys.length; i++) {
-           if (i > 0) { latlngs += ','; }
-          var m = markers._layers[keys[i]];
-          latlngs += m.getLatLng().lng + ',' + m.getLatLng().lat;
-        }
-
+        var m1 = markers._layers[keys[keys.length-2]].getLatLng();
+        var m2 = markers._layers[keys[keys.length-1]].getLatLng();
+        var latlngs = m1.lng + ',' + m1.lat + ',' + m2.lng + ',' + m2.lat;
         var url = 'http://' + router + '/route/?coords=' + latlngs + '&callback=?';
         $.get(url, function(data) {
-          routes.clearLayers()
+          //if (!append) { routes.clearLayers() }
           try {
             JSON.parse(data)
             routes.addData(JSON.parse(data));
           } catch(e) {
-            // console.log('Could not parse JSON');
+            alert('Ops!!! Nå fant jeg ikke frem!');
           }
         }, 'jsonp');
       }    
