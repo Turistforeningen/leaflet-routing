@@ -68,9 +68,8 @@
       }
     });
     map.addControl(drawControl);
-    
-    function tryToRoute( append ) {
-      var append = append || false;
+    function tryToRoute( modify ) {
+      var modify = modify || false;
           
       var keys = Object.keys(markers._layers);
       if (keys.length > 1) {
@@ -79,12 +78,21 @@
         var latlngs = m1.lng + ',' + m1.lat + ',' + m2.lng + ',' + m2.lat;
         var url = 'http://' + router + '/route/?coords=' + latlngs + '&callback=?';
         $.get(url, function(data) {
-          //if (!append) { routes.clearLayers() }
+          if (modify) {
+            var keys = Object.keys(routes._layers);
+            console.log(keys)
+            if (keys.length > 0) {
+              routes.removeLayer(routes._layers[keys[keys.length-1]]);
+            }
+          }
           try {
             JSON.parse(data)
             routes.addData(JSON.parse(data));
           } catch(e) {
-            alert('Ops!!! Nå fant jeg ikke frem!');
+            routes.addData({
+              "type": "LineString",
+              "coordinates": [[m1.lng, m1.lat], [m2.lng, m2.lat]]
+            });
           }
         }, 'jsonp');
       }    
@@ -122,7 +130,7 @@
     
     map.on('draw:edited', function (e) {
       console.log('draw:edited', e);
-      tryToRoute();
+      tryToRoute( true );
       
       /* e.layers.eachLayer(function (layer) {
         var id, name, geom;
