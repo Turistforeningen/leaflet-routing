@@ -80,7 +80,7 @@
         $.get(url, function(data) {
           if (modify) {
             var keys = Object.keys(routes._layers);
-            console.log(keys)
+            // console.log(keys)
             if (keys.length > 0) {
               routes.removeLayer(routes._layers[keys[keys.length-1]]);
             }
@@ -115,7 +115,7 @@
     });
     
     map.on('draw:deleted', function (e) {
-      console.log('draw:deleted', e);
+      // console.log('draw:deleted', e);
       
       /* e.layers.eachLayer(function (layer) {
         var id;
@@ -129,7 +129,7 @@
     });
     
     map.on('draw:edited', function (e) {
-      console.log('draw:edited', e);
+      // console.log('draw:edited', e);
       tryToRoute( true );
       
       /* e.layers.eachLayer(function (layer) {
