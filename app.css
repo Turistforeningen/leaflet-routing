@@ -1,0 +1,35 @@
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+div.leaflet-draw-toolbar a {
+  width: 90px;
+  padding: 0 5px;
+  background: white;
+}
+
+a.leaflet-draw-draw-polygon:before {
+  content: 'Nytt område';
+}
+
+a.leaflet-draw-edit-edit:before {
+  content: 'Endre område';
+}
+
+a.leaflet-draw-edit-remove:before {
+  content: 'Slett område';
+}
+
+ul.leaflet-draw-actions {
+  left: 100px;
+}
+
+div.leaflet-draw-tooltip {
+  display: none;
+}
+*/
