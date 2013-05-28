@@ -1,3 +1,9 @@
+/*
+	Routing capability using the Leaflet framework
+	Copyright (c) 2013, Turistforeningen, Hans Kristian Flaatten
+
+	https://github.com/Turistforeningen/leaflet-routing
+*/
 (function() {
   "use strict";
   jQuery(function($) {        
