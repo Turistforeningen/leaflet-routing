@@ -37,17 +37,7 @@
         return true;
       } */
     }).addTo(map);
-    
-    /* $.getJSON(areaUrl + '?key=' + key + '&callback=?', function(data) {
-      for (var i = 0; i < data.features.length; i++) {
-        if (data.features[i].properties.edit) {
-          myPolygons.addData(data.features[i]);
-        } else {
-          otherPolygons.addData(data.features[i]);
-        }
-      }
-    }); */
-        
+            
     var drawControl = new L.Control.Draw({
       draw: {
         position  : 'topleft'
@@ -68,50 +58,79 @@
       }
     });
     map.addControl(drawControl);
-    function tryToRoute( modify ) {
-      var modify = modify || false;
-          
-      var keys = Object.keys(markers._layers);
-      if (keys.length > 1) {
-        var m1 = markers._layers[keys[keys.length-2]].getLatLng();
-        var m2 = markers._layers[keys[keys.length-1]].getLatLng();
-        var latlngs = m1.lng + ',' + m1.lat + ',' + m2.lng + ',' + m2.lat;
+    
+    function routeDistance(l1, l2, cb) {
+        var latlngs = l1.lng + ',' + l1.lat + ',' + l2.lng + ',' + l2.lat;
         var url = 'http://' + router + '/route/?coords=' + latlngs + '&callback=?';
         $.get(url, function(data) {
-          if (modify) {
-            var keys = Object.keys(routes._layers);
-            // console.log(keys)
-            if (keys.length > 0) {
-              routes.removeLayer(routes._layers[keys[keys.length-1]]);
-            }
-          }
           try {
-            JSON.parse(data)
-            routes.addData(JSON.parse(data));
-          } catch(e) {
-            routes.addData({
-              "type": "LineString",
-              "coordinates": [[m1.lng, m1.lat], [m2.lng, m2.lat]]
+            L.GeoJSON.geometryToLayer(JSON.parse(data)).eachLayer(function (layer) {
+              // console.log('route');
+              return cb(null, layer);
             });
+          } catch(e) {
+            // console.log('no route');
+            return cb(true, L.GeoJSON.geometryToLayer({
+              "type": "LineString",
+              "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
+            }));
           }
-        }, 'jsonp');
-      }    
-    };
+        }, 'jsonp').error(function() {
+          // console.log('error');
+          return cb(true, L.GeoJSON.geometryToLayer({
+            "type": "LineString",
+            "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
+          }));
+        });
+    }
     
+    function route( curr ) {
+      var prev = curr.routing.prevMarker;
+      var next = curr.routing.nextMarker;
+      
+      // Previous line segment
+      if (prev !== null) {
+        routeDistance(prev.getLatLng(), curr.getLatLng(), function(error, layer) {
+          if (curr.routing.prevLine !== null) {
+            routes.removeLayer(curr.routing.prevLine);
+          }
+          routes.addLayer(layer);
+          curr.routing.prevLine = layer;
+          prev.routing.nextLine = layer;
+        });
+      }
+      
+      // Next line segment
+      if (next !== null) {
+        var timeout = (prev !== null ? 2000 : 0);
+        // console.log('timeout', timeout);
+        setTimeout(function() {
+          routeDistance(curr.getLatLng(), next.getLatLng(), function(error, layer) {
+            if (curr.routing.nextLine !== null) {
+              routes.removeLayer(curr.routing.nextLine);
+            }
+            routes.addLayer(layer);
+            curr.routing.nextLine = layer;
+            next.routing.prevLine = layer;
+          });
+        }, timeout);
+      }
+    }
+
+    var prevMarker = null;
     map.on('draw:created', function (e) {
-      // console.log('draw:created', e);
-      // waypoints.push([e.layer.getLatLng().lng, e.layer.getLatLng().lat])
+      e.layer.routing = {
+        prevMarker: prevMarker
+        ,nextMarker: null
+        ,prevLine: null
+        ,nextLine: null
+      };
+      prevMarker = e.layer;
       markers.addLayer(e.layer);
-      tryToRoute();
-            
-      /* var geom, name;
-      
-      name = 'Uten navn';
-      geom = latlngsToString(e.layer._latlngs);
-      
-      $.post(areaUrl + '?key=' + key + '&method=post&callback=?', {'name': name, 'geom': geom}, function(data) {
-        return myPolygons.addData(data);
-      },'jsonp'); */
+      if (e.layer.routing.prevMarker !== null) {
+        e.layer.routing.prevMarker.routing.nextMarker = e.layer;
+        route(e.layer);
+      }
     });
     
     map.on('draw:deleted', function (e) {
@@ -130,7 +149,13 @@
     
     map.on('draw:edited', function (e) {
       // console.log('draw:edited', e);
-      tryToRoute( true );
+      
+      e.layers.eachLayer(function (layer) {
+        // @todo handle multiple runs
+        return route(layer);
+      });
+      
+      //
       
       /* e.layers.eachLayer(function (layer) {
         var id, name, geom;
