@@ -75,7 +75,7 @@
               "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
             }));
           }
-        }, 'jsonp').error(function() {
+        }, 'jsonp').fail(function() {
           // console.log('error');
           return cb(true, L.GeoJSON.geometryToLayer({
             "type": "LineString",
