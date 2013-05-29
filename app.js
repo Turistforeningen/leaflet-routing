@@ -76,7 +76,7 @@
             }));
           }
         }, 'jsonp').fail(function() {
-          // console.log('error');
+          alert('Routing service failed!');
           return cb(true, L.GeoJSON.geometryToLayer({
             "type": "LineString",
             "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
@@ -102,7 +102,7 @@
       
       // Next line segment
       if (next !== null) {
-        var timeout = (prev !== null ? 2000 : 0);
+        var timeout = (prev !== null ? 1500 : 0);
         // console.log('timeout', timeout);
         setTimeout(function() {
           routeDistance(curr.getLatLng(), next.getLatLng(), function(error, layer) {
@@ -149,10 +149,13 @@
     
     map.on('draw:edited', function (e) {
       // console.log('draw:edited', e);
+      var i, fn;
       
+      i = 0;
+      fn = function(l) { return route(l); }
       e.layers.eachLayer(function (layer) {
-        // @todo handle multiple runs
-        return route(layer);
+        setTimeout(fn, (i*3000), layer);
+        i++;
       });
       
       //
