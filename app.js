@@ -62,26 +62,30 @@
     function routeDistance(l1, l2, cb) {
         var latlngs = l1.lng + ',' + l1.lat + ',' + l2.lng + ',' + l2.lat;
         var url = 'http://' + router + '/route/?coords=' + latlngs + '&callback=?';
-        $.get(url, function(data) {
-          try {
-            L.GeoJSON.geometryToLayer(JSON.parse(data)).eachLayer(function (layer) {
-              // console.log('route');
-              return cb(null, layer);
-            });
-          } catch(e) {
-            // console.log('no route');
+        var req = $.getJSON(url);
+        
+        req.always(function(data, status) {
+          if (status === 'success') {
+            try {
+              L.GeoJSON.geometryToLayer(JSON.parse(data)).eachLayer(function (layer) {
+                // console.log('route');
+                return cb(null, layer);
+              });
+            } catch(e) {
+              // console.log('no route');
+              return cb(true, L.GeoJSON.geometryToLayer({
+                "type": "LineString",
+                "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
+              }));
+            }
+          } else {
+            alert('Routing service failed!');
             return cb(true, L.GeoJSON.geometryToLayer({
               "type": "LineString",
               "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
             }));
-          }
-        }, 'jsonp').fail(function() {
-          alert('Routing service failed!');
-          return cb(true, L.GeoJSON.geometryToLayer({
-            "type": "LineString",
-            "coordinates": [[l1.lng, l1.lat], [l2.lng, l2.lat]]
-          }));
-        });
+          }          
+        });        
     }
     
     function route( curr ) {
