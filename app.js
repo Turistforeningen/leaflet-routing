@@ -9,33 +9,50 @@
   jQuery(function($) {        
     var waypoints = [];
     
-    var router = window.location.hash.substr(1) || 'localhost';
+    var service = window.location.hash.substr(1) || 'localhost';
+    var bboxUrl = 'http://' + service + '/bbox/?bbox=';
     var topo = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
       maxZoom: 16,
       attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
     });
-    var map = new L.Map('map', {layers: [topo], center: new L.LatLng(61.5, 9), zoom: 12 });
+    var map = new L.Map('map', {layers: [topo], center: new L.LatLng(61.5, 9), zoom: 13 });
+    
+    // SNAPPING LAYER
+    var snapping = L.geoJson(null, {
+      style: function (feature) {
+    		return {opacity: 0};
+    	}
+    }).addTo(map);
+
+    // MAP MOVE
+    map.on('moveend', function() {
+      if (map.getZoom() > 12) {
+        $.getJSON(bboxUrl + map.getBounds().toBBoxString()).always(function(data, status) {
+          if (status === 'success') {
+            if (typeof data.geometries !== 'undefined' && data.geometries.length > 0) {
+              snapping.clearLayers();
+              snapping.addData(data);
+            }
+          } else {
+            console.error('Could not load snapping data');
+          }          
+        });
+      } else {
+        snapping.clearLayers();
+      }
+    });
+    map.fire('moveend');
     
     var markers = L.geoJson(null, {
       style: function (feature) {
     		return {color: 'blue'};
     	}
-      /* ,onEachFeature: function(feature, layer) {
-        feature.properties.name = $("<div/>").html(feature.properties.name).text();
-        layer.bindPopup(feature.properties.name);
-        return true;
-      } */
     }).addTo(map);
     
     var routes = L.geoJson(null, {
       style: function (feature) {
     		return {color: 'green'};
     	}
-    	/* ,onEachFeature: function(feature, layer) {
-        feature.properties.name = $("<div/>").html(feature.properties.name).text();
-        layer.bindPopup('Navn: <input name="'+feature.properties.id+'" type="text" value="'+feature.properties.name+'" onchange="featureSaveName(this.name, this.value)"><button>Lagre</button>');
-        return true;
-      } */
     }).addTo(map);
             
     var drawControl = new L.Control.Draw({
@@ -44,7 +61,14 @@
         ,polyline  : null
         ,circle    : null
         ,rectangle : null
-        /* ,marker    : null */
+        ,marker    : {
+          snapping: {
+			  			enabled      : true		  
+			  			,layers       : [snapping]
+			  			,sensitivity  : 20
+			  			,vertexonly   : false
+			  		}
+        }
         ,polygon   : null
       },
       edit: {
@@ -61,7 +85,7 @@
     
     function routeDistance(l1, l2, cb) {
         var latlngs = l1.lng + ',' + l1.lat + ',' + l2.lng + ',' + l2.lat;
-        var url = 'http://' + router + '/route/?coords=' + latlngs + '&callback=?';
+        var url = 'http://' + service + '/route/?coords=' + latlngs + '&callback=?';
         var req = $.getJSON(url);
         
         req.always(function(data, status) {
@@ -135,6 +159,16 @@
         e.layer.routing.prevMarker.routing.nextMarker = e.layer;
         route(e.layer);
       }
+      
+      e.layer.on('drag', function(e) {
+        this.setLatLng(L.LineUtil.snapToLayers(this.getLatLng(), this._leaflet_id, {
+          enabled       : true		  
+	  			,layers       : [snapping]
+	  			,sensitivity  : 20
+	  			,vertexonly   : false
+        }));	
+      });
+      
     });
     
     map.on('draw:deleted', function (e) {
