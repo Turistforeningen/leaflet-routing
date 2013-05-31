@@ -31,6 +31,7 @@ var routes;
         var url = bboxUrl + map.getBounds().toBBoxString() + '&callback=?';
         $.getJSON(url).always(function(data, status) {
           if (status === 'success') {
+            data = JSON.parse(data);
             if (typeof data.geometries !== 'undefined' && data.geometries.length > 0) {
               snapping.clearLayers();
               snapping.addData(data);
