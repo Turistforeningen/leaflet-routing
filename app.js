@@ -145,8 +145,16 @@ var routes;
         e.layer.routing.prevMarker.routing.nextMarker = e.layer;
         route(e.layer);
       }
+      var timerID = null;
       e.layer.on('drag', function(e) {
         this.setLatLng(L.LineUtil.snapToLayers(this.getLatLng(), this._leaflet_id, snappingOpts));	
+        clearTimeout(timerID);
+        timerID = setTimeout(function(marker) {
+          route(marker);
+        }, 1000, this);
+      });
+      e.layer.on('dragstop', function(e) {
+        route(this);
       });
       e.layer.on('dragend', function(e) {
         route(this);
