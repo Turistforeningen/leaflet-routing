@@ -28,7 +28,8 @@ var routes;
     // MAP MOVE
     map.on('moveend', function() {
       if (map.getZoom() > 12) {
-        $.getJSON(bboxUrl + map.getBounds().toBBoxString()).always(function(data, status) {
+        var url = bboxUrl + map.getBounds().toBBoxString() + '&callback=?';
+        $.getJSON(url).always(function(data, status) {
           if (status === 'success') {
             if (typeof data.geometries !== 'undefined' && data.geometries.length > 0) {
               snapping.clearLayers();
