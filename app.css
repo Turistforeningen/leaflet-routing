@@ -6,6 +6,10 @@
   height: 100%;
 }
 
+div.leaflet-draw-section:last-child {
+  display: none;
+}
+
 /*
 div.leaflet-draw-toolbar a {
   width: 90px;
