@@ -796,7 +796,7 @@ L.Draw.Marker = L.Draw.Feature.extend({
 	options: {
 		icon: new L.Icon.Default(),
 		zIndexOffset: 2000, // This should be > than the highest z-index any markers
-	
+
 		snapping: {
 			enabled			: false, // snapping
 			layers			: [],		 // snapping
@@ -810,6 +810,8 @@ L.Draw.Marker = L.Draw.Feature.extend({
 		this.type = L.Draw.Marker.TYPE;
 
 		L.Draw.Feature.prototype.initialize.call(this, map, options);
+
+		L.DomEvent.addListener(this._container, 'keyup', this._startMarking, this);
 	},
 
 	addHooks: function () {
@@ -861,7 +863,7 @@ L.Draw.Marker = L.Draw.Feature.extend({
 
 	_onMouseMove: function (e) {
 		var latlng = e.latlng;
-	 
+
 		if (this._marker && typeof this._marker.options.snapping !== 'undefined' && this._marker.options.snapping.enabled) {
 			latlng = this._marker.snapTo(latlng);
 		}
@@ -889,12 +891,21 @@ L.Draw.Marker = L.Draw.Feature.extend({
 	_onClick: function () {
 		this._fireCreatedEvent();
 
-		this.disable();
+		//this.disable();
 	},
 
 	_fireCreatedEvent: function () {
 		var marker = new L.Marker(this._marker.getLatLng(), { icon: this.options.icon });
 		L.Draw.Feature.prototype._fireCreatedEvent.call(this, marker);
+	},
+
+	// Cancel drawing when the escape key is pressed
+	_startMarking: function (e) {
+		if (e.keyCode === 77) {
+			this.enable();
+		} else if (e.keyCode === 27) {
+			this.disable();
+		}
 	}
 });
 
