@@ -10,6 +10,14 @@ div.leaflet-draw-section:last-child {
   display: none;
 }
 
+div.leaflet-routing-mouse-marker {
+  background-color: #6464ff;
+  border: solid 1px #000000;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+}
+
 /*
 div.leaflet-draw-toolbar a {
   width: 90px;
