@@ -32,6 +32,54 @@ function Routing(map, api) {
     this.map.fire('moveend');
     
     this._initDrawing();
+    
+    this._mouseMarker = L.marker([0, 0], {
+      icon: L.divIcon({
+        className: 'leaflet-routing-mouse-marker'
+        ,iconAnchor: [7, 7]
+        ,iconSize: [14, 14]
+      })
+      ,opacity: 1
+    });
+    this._mouseMarker.addTo(this.map);
+    this._mouseMarker.dragging.enable();
+    
+    this._mouseMarker.on('drag', function(e) {
+      var marker, id, latlng;
+      
+      marker = e.target;
+      id     = marker._leaflet_id;
+      latlng = L.LineUtil.snapToLayers(marker._latlng, id, this._snappingOpts);
+    
+      marker.setLatLng(latlng);	
+    }, this);
+    
+    this._mouseMarker.on('dragend', function(e) {
+      var marker, prev, next;
+      
+      marker = L.marker(e.target._latlng);
+      prev = this._mouseMarker._feature.routing.prevMarker;
+      next = this._mouseMarker._feature.routing.nextMarker;
+      
+      this.addWaypoint(marker, prev, next);
+    }, this);
+
+    
+    // @todo stop this madness while drawing!!!!
+    this.map.on('mousemove', function(e) {
+      var latlng = L.LineUtil.snapToLayers(e.latlng, null, {
+        enabled       : true
+        ,layers       : [this.layer.segments]
+        ,sensitivity  : 40
+      });
+            
+      if (latlng._feature === null) {
+        this._mouseMarker.setLatLng([0,0]);
+      } else {
+        this._mouseMarker.setLatLng(latlng);
+        this._mouseMarker._feature = latlng._feature;
+      }
+    }, this);
   };
   
   /**
@@ -150,6 +198,52 @@ function Routing(map, api) {
   };
   
   /**
+   * Marker on click
+   *
+   * @access private
+   *
+   * @param <L.Marker> marker - new waypoint marker
+   * @param <Function> cb - callback method
+   *
+   * @return void
+  */
+  this._markerOnClick = function(e) {
+    var marker;
+    
+    marker = e.layer;
+    
+    if (this.prevWaypoint._leaflet_id === marker._leaflet_id) {
+      this.prevWaypoint = marker.routing.prevMarker;
+    }
+
+    if (marker.routing.prevMarker !== null) {
+      marker.routing.prevMarker.routing.nextMarker = marker.routing.nextMarker;
+      marker.routing.prevMarker.routing.nextLine = null;
+    }
+    
+    if (marker.routing.nextMarker !== null) {
+      marker.routing.nextMarker.routing.prevMarker = marker.routing.prevMarker;
+      marker.routing.nextMarker.routing.prevLine = null;
+    }
+    
+    if (marker.routing.nextLine !== null) {
+      this.layer.segments.removeLayer(marker.routing.nextLine);
+    }
+
+    if (marker.routing.prevLine !== null) {
+      this.layer.segments.removeLayer(marker.routing.prevLine);
+    }
+    
+    if (marker.routing.prevMarker !== null) {
+      this._routeWaypoint(marker.routing.prevMarker);
+    } else if (marker.routing.nextMarker !== null) {
+      this._routeWaypoint(marker.routing.nextMarker);
+    }
+    
+    this.layer.waypoints.removeLayer(marker); 
+  };
+
+  /**
    * Add new waypoint to path
    *
    * @access public
@@ -163,7 +257,7 @@ function Routing(map, api) {
   */
   this.addWaypoint = function( marker, prev, next, cb ) {
     var $this = this;
-    
+        
     marker.routing = {
       prevMarker  : prev
       ,nextMarker : next
@@ -191,21 +285,15 @@ function Routing(map, api) {
     this.layer.waypoints.addLayer(marker);
     marker.dragging.enable();
     marker.on('drag', this._markerOnDrag, this);
-    // marker.on('dragend', this._markerOnDragend, this);
+    marker.on('click', this._markerOnClick, this);
     
-    if (prev === null || next === null) {
-      $this._routeWaypoint(marker, function(err, data) {
-        if (typeof cb === 'function') {
-          cb(err, data);
-        }
-      });
-    } else {
+    $this._routeWaypoint(marker, function(err, data) {
       if (typeof cb === 'function') {
-        cb(null, true);
+        cb(err, data);
       }
-    }
+    });
   }
-  
+    
   /**
    * Route with respect to waypoint
    *
@@ -263,17 +351,7 @@ function Routing(map, api) {
       if (m1.routing.nextLine !== null) {
         $this.layer.segments.removeLayer(m1.routing.nextLine);
       }
-      $this.layer.segments.addLayer(layer);
-      
-      layer.on('click', function(e) {
-        var marker, prev, next;
-        
-        marker = L.marker(e.latlng);
-        prev = e.layer.routing.prevMarker;
-        next = e.layer.routing.nextMarker;
-        
-        $this.addWaypoint(marker, prev, next);
-      }, $this);
+      $this.layer.segments.addLayer(layer);      
       
       m1.routing.nextLine = layer;
       m2.routing.prevLine = layer;
