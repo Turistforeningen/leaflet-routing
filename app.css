@@ -6,16 +6,10 @@
   height: 100%;
 }
 
-div.leaflet-draw-section:last-child {
-  display: none;
-}
-
-div.leaflet-routing-mouse-marker {
-  background-color: #6464ff;
-  border: solid 1px #000000;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  border-radius: 7px;
+div.line-mouse-marker {
+  background-color: #ffffff;
+  border: 2px solid black;
+  border-radius: 10px;
 }
 
 /*

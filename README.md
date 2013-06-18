@@ -5,7 +5,30 @@ Research and development of a Leaflet.js routing module. The module will be capa
 
 ![Prototype Routing using Leaflet](https://raw.github.com/Turistforeningen/leaflet-routing/gh-pages/images/promo.png)
 
-### Copyright
+## Usage
+
+```javascript
+var routing = new L.Routing({
+  position: 'topright'
+  ,routing: {
+    router: myRouter
+  }
+  ,snapping: {
+    layers: [snapping]
+    ,sensitivity: 15
+    ,vertexonly: false
+  }
+});
+map.addControl(routing);
+```
+
+### Enable Drawing
+
+```javascript
+routing.draw(true);
+```
+
+## Copyright
 
 Copyright (c) 2013, Turistforeningen, Hans Kristian Flaatten
 

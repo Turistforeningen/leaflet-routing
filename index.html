@@ -5,8 +5,6 @@
   <title>Routing in Leaflet</title>
   <link rel="stylesheet" href="libs/leaflet/leaflet.css" />
   <!--[if lte IE 8]><link rel="stylesheet" href="libs/leaflet/leaflet.ie.css" /><![endif]-->
-  <link rel="stylesheet" href="libs/leaflet-draw/leaflet.draw.css" />
-  <!--[if lte IE 8]><link rel="stylesheet" href="libs/leaflet-draw/leaflet.draw.ie.css" /><![endif]-->
   <link rel="stylesheet" href="app.css" />
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -24,9 +22,12 @@
 <div id="map"></div>
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="libs/leaflet/leaflet.js"></script>
-  <script src="libs/leaflet-draw/leaflet.draw-src.js"></script>
-  <script src="libs/leaflet-draw/leaflet.draw-no.js"></script>
-  <script src="libs/leaflet-draw/leaflet.draw.route.js"></script>
+  <script src="src/utils/LineUtil.Snapping.js"></script>
+  <script src="src/utils/Marker.Snapping.js"></script>
+  <script src="src/L.Routing.js"></script>
+  <script src="src/L.Routing.Storage.js"></script>
+  <script src="src/L.Routing.Draw.js"></script>
+  <script src="src/L.Routing.Edit.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
