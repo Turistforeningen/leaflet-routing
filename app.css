@@ -12,30 +12,16 @@ div.line-mouse-marker {
   border-radius: 10px;
 }
 
-/*
-div.leaflet-draw-toolbar a {
-  width: 90px;
-  padding: 0 5px;
-  background: white;
+#export {
+  position: relative;
+  float: right;
+  background-color: rgb(228,225,218);
+  border: 1px solid rgb(196, 196, 196);
+  padding: 10px;
+  width: 250px;
+  z-index: 3000;
 }
 
-a.leaflet-draw-draw-polygon:before {
-  content: 'Nytt område';
+#export input {
+  width: 70px;
 }
-
-a.leaflet-draw-edit-edit:before {
-  content: 'Endre område';
-}
-
-a.leaflet-draw-edit-remove:before {
-  content: 'Slett område';
-}
-
-ul.leaflet-draw-actions {
-  left: 100px;
-}
-
-div.leaflet-draw-tooltip {
-  display: none;
-}
-*/

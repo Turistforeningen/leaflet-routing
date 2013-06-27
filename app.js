@@ -10,11 +10,16 @@ var routing;
 (function() {
   "use strict";
   jQuery(function($) {        
-    var api, rUrl, sUrl, topo, map, snapping, myRouter;
-        
-    api = window.location.hash.substr(1) || 'localhost';
-    rUrl = 'http://' + api + '/route/?coords='
-    sUrl = 'http://' + api + '/bbox/?bbox=';
+    var api, apiKey, rUrl, sUrl, topo, map, snapping, myRouter;
+    
+    api = window.location.hash.substr(1).split('@');
+    if (api.length === 2) {
+      rUrl = 'http://' + api[1] + '/route/?coords='
+      sUrl = 'http://' + api[1] + '/bbox/?bbox=';
+      apiKey = api[0];
+    } else {
+      throw new Error('API auth failed');
+    }
     
     topo = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
       maxZoom: 16,
@@ -79,7 +84,7 @@ var routing;
     
     // Leaflet Routing Module
     routing = new L.Routing({
-      position: 'topright'
+      position: 'topleft'
       ,routing: {
         router: myRouter
       }
@@ -91,6 +96,27 @@ var routing;
     });
     map.addControl(routing);
     routing.draw(true); // enable drawing mode
-  
+    
+    $('#eta-export').on('click', function() {
+      var id = $('#eta-id').val();
+      if (!id) { alert('Ingen tp_id definert!'); return; } 
+      if (confirm('Eksport til ETA vil overskrive eksisterende geometri!')) {
+        routing.toGeoJSON(function(res) {
+          var data = [];
+          for (var i = 0; i < res.length; i++) {
+            data.push(res[i][1] + ' ' + res[i][0]);
+          }
+          data = 'LINESTRING(' + data.join(',') + ')';
+          $.post('http://localhost:8080/app/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
+            if (data.error) {
+              alert('Eksport feilet med feilkode ' + data.error);
+            } else if (data.success) {
+              alert('Eksport suksess!');
+            }
+          });
+        });
+      }
+    });
+    
   });
 }).call(this);

@@ -22,7 +22,7 @@ L.Routing = L.Control.extend({
 
   // OPTIONS
   ,options: {
-    position: 'topright'
+    position: 'topleft'
     ,icons: {
       start: new L.Icon.Default()
       ,end: new L.Icon.Default()
@@ -76,7 +76,7 @@ L.Routing = L.Control.extend({
     this._waypoints._first = null;
     this._waypoints._last = null;
 
-		L.DomUtil.disableTextSelection();
+		//L.DomUtil.disableTextSelection();
     //this._tooltip = new L.Tooltip(this._map);
 		//this._tooltip.updateContent({ text: L.drawLocal.draw.marker.tooltip.start });
     L.DomEvent.addListener(this._container, 'keyup', this._keyupListener, this);
@@ -98,8 +98,10 @@ L.Routing = L.Control.extend({
     this._edit.on('segment:mouseout' , this._fireSegmentEvent, this);
     this._edit.on('segment:dragstart', this._fireSegmentEvent, this);
     this._edit.on('segment:dragend'  , this._fireSegmentEvent, this);
-
-    return L.DomUtil.create('div', 'leaflet-routing');
+    
+    var container = L.DomUtil.create('div', 'leaflet-routing');
+    
+    return container;
 	}
 	
 	/**
@@ -362,6 +364,31 @@ L.Routing = L.Control.extend({
   */
   ,getLast: function() {
     return this._waypoints._last;
+  }
+  
+  /**
+   *
+  */
+  ,toGeoJSON: function(cb) {
+    if (this._waypoints._first !== null) {
+      var latlngs = [];
+      
+      function next(waypoint, done) {
+        if (waypoint._routing.nextMarker !== null) {
+          var tmp = waypoint._routing.nextLine.getLatLngs();
+          for (var i = 0; i < tmp.length; i++) {
+            latlngs.push([tmp[i].lat, tmp[i].lng]);
+          }
+          next(waypoint._routing.nextMarker, done);
+        } else {
+          done(latlngs);
+        }
+      }
+      
+      next(this._waypoints._first, cb);
+    } else {
+      cb([]);
+    }
   }
   
   /**
