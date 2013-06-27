@@ -107,7 +107,7 @@ var routing;
             data.push(res[i][1] + ' ' + res[i][0]);
           }
           data = 'LINESTRING(' + data.join(',') + ')';
-          $.post('http://localhost:8080/app/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
+          $.post('http://mintur.ut.no/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
             if (data.error) {
               alert('Eksport feilet med feilkode ' + data.error);
             } else if (data.success) {
