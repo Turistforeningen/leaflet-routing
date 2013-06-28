@@ -10,7 +10,7 @@ var routing;
 (function() {
   "use strict";
   jQuery(function($) {        
-    var api, apiKey, rUrl, sUrl, topo, map, snapping, myRouter;
+    var api, apiKey, rUrl, sUrl, topo, map, snapping, inport, myRouter;
     
     api = window.location.hash.substr(1).split('@');
     if (api.length === 2) {
@@ -31,6 +31,14 @@ var routing;
       ,center: new L.LatLng(61.5, 9)
       ,zoom: 13
     });
+    
+    // Import Layer
+    inport = new L.layerGroup(null, {
+      style: {
+        opacity:0.5
+        ,clickable:false
+      }
+    }).addTo(map);
     
     // Snapping Layer
     snapping = new L.geoJson(null, {
@@ -107,7 +115,7 @@ var routing;
             data.push(res[i][1] + ' ' + res[i][0]);
           }
           data = 'LINESTRING(' + data.join(',') + ')';
-          $.post('http://mintur.ut.no/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
+          $.post('http://localhost:8080/app/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
             if (data.error) {
               alert('Eksport feilet med feilkode ' + data.error);
             } else if (data.success) {
@@ -116,6 +124,25 @@ var routing;
           });
         });
       }
+    });
+    
+    $('#eta-import').on('click', function() {
+      var id = $('#eta-id').val();
+      if (!id) { alert('Ingen tp_id definert!'); return; } 
+      $.get('http://localhost:8080/app/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, function(data) {
+        if (data.error) {
+          alert('Import feilet med feilkode ' + data.error);
+        } else if (data.coords) {
+          data.coords = data.coords.replace('LINESTRING(', '').replace(')', '').split(',');
+          for (var i = 0; i < data.coords.length; i++) {
+            data.coords[i] = new L.LatLng(data.coords[i].split(' ')[1], data.coords[i].split(' ')[0]);
+          }
+          inport.clearLayers();
+          var p = new L.Polyline(data.coords, {clickable:false, color: '#000000', opacity: 0.4});
+          inport.addLayer(p);
+          map.fitBounds(p.getBounds());
+        }
+      });
     });
     
   });
