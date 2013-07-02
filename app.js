@@ -5,11 +5,11 @@
 	https://github.com/Turistforeningen/leaflet-routing
 */
 
-var routing;
+var routing, data;
 
 (function() {
   "use strict";
-  jQuery(function($) {        
+  jQuery(function($) {
     var api, apiKey, rUrl, sUrl, topo, map, snapping, inport, myRouter;
     
     api = window.location.hash.substr(1).split('@');
@@ -49,7 +49,7 @@ var routing;
     }).addTo(map);
     map.on('moveend', function() {
       if (map.getZoom() > 12) {
-        var url;        
+        var url;
         url = sUrl + map.getBounds().toBBoxString() + '&callback=?';
         $.getJSON(url).always(function(data, status) {
           if (status === 'success') {
@@ -60,16 +60,13 @@ var routing;
             }
           } else {
             console.error('Could not load snapping data');
-          }          
+          }
         });
       } else {
         snapping.clearLayers();
       }
     });
     map.fire('moveend');
-    snapping.on('click', function() {
-      console.log('click click');
-    });
     
     // Routing Function
     // @todo speed up geometryToLayer()
@@ -86,7 +83,7 @@ var routing;
           }
         } else {
           return cb(new Error('Routing failed'));
-        }        
+        }
       });
     }
     
@@ -108,7 +105,7 @@ var routing;
     $('#eta-export').hide();
     $('#eta-export').on('click', function() {
       var id = $('#eta-id').val();
-      if (!id) { alert('Ingen tp_id definert!'); return; } 
+      if (!id) { alert('Ingen tp_id definert!'); return; }
       if (confirm('Eksport til ETA vil overskrive eksisterende geometri!')) {
         routing.toGeoJSON(function(res) {
           var data = [];
@@ -127,9 +124,9 @@ var routing;
       }
     });
     
-    $('#eta-import').on('click', function() {      
+    $('#eta-import').on('click', function() {
       var id = $('#eta-id').val();
-      if (!id) { alert('Ingen tp_id definert!'); return; } 
+      if (!id) { alert('Ingen tp_id definert!'); return; }
       $.get('http://mintur.ut.no/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, function(data) {
         if (data.error) {
           alert('Import feilet med feilkode ' + data.error);
@@ -151,6 +148,50 @@ var routing;
         }
       });
     });
+    
+    function fetchSsrAc(search, cb) {
+      var result = [];
+      $.ajax({
+        url: "https://ws.geonorge.no/SKWS3Index/ssr/sok?navn=" + search + "*&epsgKode=4326&antPerSide=10"
+        ,type: "GET"
+        ,dataType: 'xml'
+        ,success: function(xml) {
+          $(xml).find('sokRes > stedsnavn').each(function(){
+            result.push({
+              title: $(this).find('stedsnavn').text()
+              ,lat: $(this).find('aust').text()
+              ,lng: $(this).find('nord').text()
+            });
+          });
+          cb(null, result);
+        }
+      });
+    }
+    
+    $('#ssr-search').typeahead({
+      remote: {
+        url: 'https://ws.geonorge.no/SKWS3Index/ssr/sok?navn=%QUERY*&epsgKode=4326&antPerSide=10',
+        dataType: 'xml',
+        filter: function(xml) {
+          var result = [];
+          $(xml).find('sokRes > stedsnavn').each(function(){
+            result.push({
+              value: $(this).find('stedsnavn').text()
+              ,tokens: [$(this).find('stedsnavn').text()]
+              ,lat: $(this).find('nord').text()
+              ,lng: $(this).find('aust').text()
+            });
+          });
+          return result;
+        }
+      }
+    });
+    
+    $('#ssr-search').on('typeahead:selected', function(e, object) {
+      var ll = new L.LatLng(object.lat, object.lng);
+      map.panTo(ll);
+      $('#ssr-search').val('');
+    })
     
   });
 }).call(this);
