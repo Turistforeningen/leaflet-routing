@@ -25,12 +25,33 @@ var routing, data;
       maxZoom: 16,
       attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
     });
+
+    var summer = L.tileLayer('http://mt3.turistforeningen.no/prod/trail_summer/{z}/{x}/{y}.png', {
+      maxZoom: 16,
+      attribution: '<a href="http://www.turistforeningen.no/">DNT</a>'
+    });
+    var winter = L.tileLayer('http://mt3.turistforeningen.no/prod/trail_winter/{z}/{x}/{y}.png', {
+      maxZoom: 16,
+      attribution: '<a href="http://www.turistforeningen.no/">DNT</a>'
+    });
+    var cabin = L.tileLayer('http://mt3.turistforeningen.no/prod/cabin/{z}/{x}/{y}.png', {
+      maxZoom: 16,
+      attribution: '<a href="http://www.turistforeningen.no/">DNT</a>'
+    });
     
     map = new L.Map('map', {
       layers: [topo]
       ,center: new L.LatLng(61.5, 9)
       ,zoom: 13
     });
+
+    L.control.layers({'Topo 2': topo}, {
+      'DNTs merkede stier': summer
+      ,'DNTs merkede vinterruter': winter
+      ,'DNTs turisthytter': cabin
+    }, {
+      position: 'topleft'
+    }).addTo(map);
     
     // Import Layer
     inport = new L.layerGroup(null, {
