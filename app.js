@@ -99,7 +99,15 @@ var routing, data;
         if (status === 'success') {
           try {
             L.GeoJSON.geometryToLayer(JSON.parse(data)).eachLayer(function (layer) {
-              return cb(null, layer);
+              // 14026
+              var d1 = l1.distanceTo(layer._latlngs[0]);
+              var d2 = l2.distanceTo(layer._latlngs[layer._latlngs.length-1]);
+              
+              if (d1 < 10 && d2 < 10) {
+                return cb(null, layer);
+              } else {
+                return cb(new Error('This has been discarded'));
+              }
             });
           } catch(e) {
             return cb(new Error('Invalid JSON'));
