@@ -44,6 +44,8 @@ var routing, data;
       ,center: new L.LatLng(61.5, 9)
       ,zoom: 13
     });
+    cabin.addTo(map);
+    summer.addTo(map);
 
     L.control.layers({'Topo 2': topo}, {
       'DNTs merkede stier': summer
