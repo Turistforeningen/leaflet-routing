@@ -148,7 +148,8 @@ var routing, data;
             if (data.error) {
               alert('Eksport feilet med feilkode ' + data.error);
             } else if (data.success) {
-              alert('Eksport suksess!');
+              window.location.href = 'http://mintur.ut.no/index.php?tp_id=' + id + '&tab=kart';
+              //alert('Eksport suksess!');
             }
           });
         });
