@@ -3,7 +3,7 @@ Routing in Leaflet
 
 Research and development of a Leaflet.js routing module. The module will be capable of the routing markers and returning geojson in various ways.
 
-![Prototype Routing using Leaflet](https://raw.github.com/Turistforeningen/leaflet-routing/gh-pages/images/promo.png)
+![Prototype Routing using Leaflet](https://raw.github.com/Turistforeningen/leaflet-routing/gh-pages/images/promo.gif)
 
 ## Usage
 
