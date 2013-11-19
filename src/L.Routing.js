@@ -2,7 +2,7 @@
  * L.Routing main class
  *
  * Main clase for the Leaflet routing module
- * 
+ *
  * @dependencies L
  *
  * @usage new L.Routing(options);
@@ -11,10 +11,10 @@
 */
 
 L.Routing = L.Control.extend({
-  
+
   // INCLUDES
   includes: [L.Mixin.Events]
-  
+
   // CONSTANTS
   ,statics: {
     VERSION: '0.0.2-dev'
@@ -26,7 +26,7 @@ L.Routing = L.Control.extend({
     ,icons: {
       start: new L.Icon.Default()
       ,end: new L.Icon.Default()
-      ,normal: new L.Icon.Default() 
+      ,normal: new L.Icon.Default()
     }
     ,zIndexOffset: 2000
     ,routing: {
@@ -38,7 +38,7 @@ L.Routing = L.Control.extend({
       ,vertexonly: false // vertex only snapping
     }
   }
-  
+
   /**
    * Routing Constructor
    *
@@ -51,10 +51,10 @@ L.Routing = L.Control.extend({
   ,initialize: function (options) {
     this._editing = false;
     this._drawing = false;
-  
+
     L.Util.setOptions(this, options);
   }
-  
+
   /**
    * Called when controller is added to map
    *
@@ -66,76 +66,84 @@ L.Routing = L.Control.extend({
   */
   ,onAdd: function (map) {
     this._map         = map;
- 		this._container   = this._map._container;
-		this._overlayPane = this._map._panes.overlayPane;
-		this._popupPane   = this._map._panes.popupPane;
- 
+     this._container   = this._map._container;
+    this._overlayPane = this._map._panes.overlayPane;
+    this._popupPane   = this._map._panes.popupPane;
+
     this._router    = this.options.routing.router;
     this._segments  = new L.FeatureGroup().addTo(map);
     this._waypoints = new L.FeatureGroup().addTo(map);
     this._waypoints._first = null;
     this._waypoints._last = null;
 
-		//L.DomUtil.disableTextSelection();
+    //L.DomUtil.disableTextSelection();
     //this._tooltip = new L.Tooltip(this._map);
-		//this._tooltip.updateContent({ text: L.drawLocal.draw.marker.tooltip.start });
+    //this._tooltip.updateContent({ text: L.drawLocal.draw.marker.tooltip.start });
     L.DomEvent.addListener(this._container, 'keyup', this._keyupListener, this);
 
-		this._draw = new L.Routing.Draw(this, {
-  		icons: this.options.icons
-  		,zIndexOffset: this.options.zIndexOffset
-  		,snapping: this.options.snapping
-		});
-		
-		this._edit = new L.Routing.Edit(this, {
-  		icons: this.options.icons
-  		,zIndexOffset: this.options.zIndexOffset
-  		,snapping: this.options.snapping
-		});
-		this._edit.enable();
-		
+    this._draw = new L.Routing.Draw(this, {
+      icons: this.options.icons
+      ,zIndexOffset: this.options.zIndexOffset
+      ,snapping: this.options.snapping
+    });
+
+    this._edit = new L.Routing.Edit(this, {
+      icons: this.options.icons
+      ,zIndexOffset: this.options.zIndexOffset
+      ,snapping: this.options.snapping
+    });
+    this._edit.enable();
+
+    this.on('waypoint:click', this._waypointClickHandler, this)
     this._segments.on('mouseover'    , this._fireSegmentEvent, this);
     this._edit.on('segment:mouseout' , this._fireSegmentEvent, this);
     this._edit.on('segment:dragstart', this._fireSegmentEvent, this);
     this._edit.on('segment:dragend'  , this._fireSegmentEvent, this);
-    
+
     var container = L.DomUtil.create('div', 'leaflet-routing');
-    
+
     return container;
-	}
-	
-	/**
-	 * Called when controller is removed from map
-	 *
-	 * @access public
-	 *
+  }
+
+  /**
+   * Called when controller is removed from map
+   *
+   * @access public
+   *
    * @param <L.Map> map - map instance
   */
-	,onRemove: function(map) {
-  	//L.DomUtil.create('div', 'leaflet-routing'); <= delete this
+  ,onRemove: function(map) {
+    //L.DomUtil.create('div', 'leaflet-routing'); <= delete this
 
+    this.off('waypoint:click', this._waypointClickHandler, this)
     this._segments.off('mouseover'    , this._fireSegmentEvent, this);
     this._edit.off('segment:mouseout' , this._fireSegmentEvent, this);
     this._edit.off('segment:dragstart', this._fireSegmentEvent, this);
     this._edit.off('segment:dragend'  , this._fireSegmentEvent, this);
 
-  	this._edit.disable();
-  	this._draw.disable();
-  	
-		L.DomUtil.enableTextSelection();
-		// this._tooltip.dispose();
-		// this._tooltip = null;
-		L.DomEvent.removeListener(this._container, 'keyup', this._keyupListener);
+    this._edit.disable();
+    this._draw.disable();
 
-  	delete this._draw;
-  	delete this._edit;
-  	delete this._map;
-  	delete this._router;
-  	delete this._segments;
-  	delete this._waypoints;
-  	delete this.options;
-	}
-  
+    L.DomUtil.enableTextSelection();
+    // this._tooltip.dispose();
+    // this._tooltip = null;
+    L.DomEvent.removeListener(this._container, 'keyup', this._keyupListener);
+
+    delete this._draw;
+    delete this._edit;
+    delete this._map;
+    delete this._router;
+    delete this._segments;
+    delete this._waypoints;
+    delete this.options;
+  }
+
+  ,_waypointClickHandler: function(e) {
+    this.removeWaypoint(e.marker, function() {
+      console.log(arguments);
+    });
+  }
+
   /**
    * Add new waypoint to path
    *
@@ -152,7 +160,7 @@ L.Routing = L.Control.extend({
     if (marker instanceof L.LatLng) {
       marker = new L.Marker(marker);
     }
-    
+
     marker._routing = {
       prevMarker  : prev
       ,nextMarker : next
@@ -160,7 +168,7 @@ L.Routing = L.Control.extend({
       ,nextLine   : null
       ,timeoutID  : null
     };
-    
+
     if (this._waypoints._first === null && this._waypoints._last === null) {
       this._waypoints._first = marker;
       this._waypoints._last = marker;
@@ -169,7 +177,7 @@ L.Routing = L.Control.extend({
     } else if (prev === null) {
       this._waypoints._first = marker;
     }
-    
+
     if (marker._routing.prevMarker !== null) {
       marker._routing.prevMarker._routing.nextMarker = marker;
       marker._routing.prevLine = marker._routing.prevMarker._routing.nextLine;
@@ -177,7 +185,7 @@ L.Routing = L.Control.extend({
         marker._routing.prevLine._routing.nextMarker = marker;
       }
     }
-    
+
     if (marker._routing.nextMarker !== null) {
       marker._routing.nextMarker._routing.prevMarker = marker;
       marker.nextLine = marker._routing.nextMarker._routing.prevLine;
@@ -185,7 +193,7 @@ L.Routing = L.Control.extend({
         marker._routing.nextLine._routing.prevMarker = marker;
       }
     }
-    
+
     marker.on('mouseover', this._fireWaypointEvent, this);
     marker.on('mouseout' , this._fireWaypointEvent, this);
     marker.on('dragstart', this._fireWaypointEvent, this);
@@ -196,8 +204,8 @@ L.Routing = L.Control.extend({
     this.routeWaypoint(marker, cb);
     this._waypoints.addLayer(marker);
     marker.dragging.enable();
-  }  
-  
+  }
+
   /**
    * Remove a waypoint from path
    *
@@ -215,28 +223,28 @@ L.Routing = L.Control.extend({
     marker.off('dragend'  , this._fireWaypointEvent, this);
     marker.off('drag'     , this._fireWaypointEvent, this);
     marker.off('click'    , this._fireWaypointEvent, this);
-    
+
     var prev = marker._routing.prevMarker;
     var next = marker._routing.nextMarker;
-    
-    if (marker._leafletId === this._waypoints._first._leafletId) {
+
+    if (this._waypoints._first && marker._leafletId === this._waypoints._first._leafletId) {
       this._waypoints._first = next;
     }
-    
-    if (marker._leafletId === this._waypoints._last._leafletId) {
+
+    if (this._waypoints._last && marker._leafletId === this._waypoints._last._leafletId) {
       this._waypoints._last = prev;
     }
-    
+
     if (prev !== null) {
       prev._routing.nextMarker = next;
       prev._routing.nextLine = null;
     }
-    
+
     if (next !== null) {
       next._routing.prevMarker = prev;
       next._routing.prevLine = null;
     }
-    
+
     if (marker._routing.nextLine !== null) {
       this._segments.removeLayer(marker._routing.nextLine);
     }
@@ -244,16 +252,18 @@ L.Routing = L.Control.extend({
     if (marker._routing.prevLine !== null) {
       this._segments.removeLayer(marker._routing.prevLine);
     }
-  
-    this._waypoints.removeLayer(marker); 
+
+    this._waypoints.removeLayer(marker);
 
     if (prev !== null) {
       this.routeWaypoint(prev, cb);
     } else if (next !== null) {
       this.routeWaypoint(next, cb);
+    } else {
+      this._draw.enable();
+      cb(null, null);
     }
-    
-    // this._draw.show();
+
   }
 
   /**
@@ -276,11 +286,11 @@ L.Routing = L.Control.extend({
         cb(err, marker);
       }
     }
-  
+
     this._routeSegment(marker._routing.prevMarker, marker, callback);
     this._routeSegment(marker, marker._routing.nextMarker, callback);
-  }  
-  
+  }
+
   /**
    * Route segment between two markers
    *
@@ -294,35 +304,35 @@ L.Routing = L.Control.extend({
    *
    * @todo logic if router fails
   */
-  ,_routeSegment: function(m1, m2, cb) {    
+  ,_routeSegment: function(m1, m2, cb) {
     var $this = this;
-    
+
     if (m1 === null || m2 === null) {
       return cb(null, true);
     }
-    
+
     this._router(m1.getLatLng(), m2.getLatLng(), function(err, layer) {
       if (typeof layer === 'undefined') {
         var layer = new L.Polyline([m1.getLatLng(), m2.getLatLng()]);
       }
-      
+
       layer._routing = {
         prevMarker: m1
         ,nextMarker: m2
       };
-      
+
       if (m1._routing.nextLine !== null) {
         $this._segments.removeLayer(m1._routing.nextLine);
       }
       $this._segments.addLayer(layer);
-            
+
       m1._routing.nextLine = layer;
       m2._routing.prevLine = layer;
-      
+
       return cb(null, layer);
     });
   }
-  
+
   /**
    * Fire events
    *
@@ -335,7 +345,10 @@ L.Routing = L.Control.extend({
   ,_fireWaypointEvent: function(e) {
     this.fire('waypoint:' + e.type, {marker:e.target});
   }
-  
+
+  /**
+   *
+  */
   ,_fireSegmentEvent: function(e) {
     if (e.type.split(':').length === 2) {
       this.fire(e.type);
@@ -343,7 +356,7 @@ L.Routing = L.Control.extend({
       this.fire('segment:' + e.type);
     }
   }
-  
+
   /**
    * Get first waypoint
    *
@@ -354,7 +367,7 @@ L.Routing = L.Control.extend({
   ,getFirst: function() {
     return this._waypoints._first;
   }
-  
+
   /**
    * Get last waypoint
    *
@@ -365,14 +378,14 @@ L.Routing = L.Control.extend({
   ,getLast: function() {
     return this._waypoints._last;
   }
-  
+
   /**
    *
   */
   ,toGeoJSON: function(cb) {
     if (this._waypoints._first !== null) {
       var latlngs = [];
-      
+
       function next(waypoint, done) {
         if (waypoint._routing.nextMarker !== null) {
           var tmp = waypoint._routing.nextLine.getLatLngs();
@@ -384,13 +397,13 @@ L.Routing = L.Control.extend({
           done(latlngs);
         }
       }
-      
+
       next(this._waypoints._first, cb);
     } else {
       cb([]);
     }
   }
-  
+
   /**
    * Start (or continue) drawing
    *
@@ -407,16 +420,16 @@ L.Routing = L.Control.extend({
     if (typeof enable === 'undefined') {
       var enable = true;
     }
-    
+
     if (enable) {
       this._draw.enable();
     } else {
       this._draw.disable();
     }
   }
-  
+
   /**
-   * Enable or disable routing 
+   * Enable or disable routing
    *
    * @access public
    *
@@ -427,9 +440,9 @@ L.Routing = L.Control.extend({
   ,routing: function (enable) {
     throw new Error('Not implemented');
   }
-  
+
   /**
-   * Enable or disable snapping 
+   * Enable or disable snapping
    *
    * @access public
    *
@@ -440,23 +453,23 @@ L.Routing = L.Control.extend({
   ,snapping: function (enable) {
     throw new Error('Not implemented');
   }
-  
-  	/**
-	 * Key up listener
-	 * 
-	 * * `ESC` to cancel drawing
-	 * * `M` to enable drawing
-	 *
-	 * @access private
-	 *
-	 * @return void
+
+    /**
+   * Key up listener
+   *
+   * * `ESC` to cancel drawing
+   * * `M` to enable drawing
+   *
+   * @access private
+   *
+   * @return void
   */
-	,_keyupListener: function (e) {
-		if (e.keyCode === 27) {
-			this._draw.disable();
-		} else if (e.keyCode === 77) {
-  		this._draw.enable();
-		}
-	}
-  
+  ,_keyupListener: function (e) {
+    if (e.keyCode === 27) {
+      this._draw.disable();
+    } else if (e.keyCode === 77) {
+      this._draw.enable();
+    }
+  }
+
 });
