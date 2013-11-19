@@ -279,6 +279,7 @@ L.Routing.Edit = L.Handler.extend({
     });
 
     this._dragging = false;
+    this._setTrailers(null, null, null, false);
     this.fire('segment:dragend');
   }
 
