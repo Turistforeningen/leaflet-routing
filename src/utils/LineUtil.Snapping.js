@@ -28,8 +28,18 @@ L.Util.extend(L.LineUtil, {
 				// Don't even try snapping to itself!
 				if (id === feature._leaflet_id) { continue; }
 
+				// GeometryCollection
+				if (feature._layers) {
+					var newLatlng = this.snapToLayers(latlng, id, {
+						'sensitivity': sensitivity,
+						'vertexonly': vertexonly,
+						'layers': [feature]
+					});
+					// What if this is the same?
+					res = {'minDist': latlng.distanceTo(newLatlng), 'minPoint': newLatlng};
+
 				// Marker
-				if (feature instanceof L.Marker) {
+        } else if (feature instanceof L.Marker) {
 					res = this._snapToLatlngs(latlng, [feature.getLatLng()], map, sensitivity, vertexonly, minDist);
 
 				// Polyline
@@ -48,16 +58,6 @@ L.Util.extend(L.LineUtil, {
 				// MultiPolygon
 				} else if (feature instanceof L.MultiPolygon) {
 					res = this._snapToMultiPolygon(latlng, feature, map, sensitivity, vertexonly, minDist);
-
-				// GeometryCollection
-				} else if (typeof feature.feature !== 'undefined' && typeof feature.feature.type !== 'undefined' && feature.feature.type === 'GeometryCollection') {
-					var newLatlng = this.snapToLayers(latlng, id, {
-						'sensitivity': sensitivity,
-						'vertexonly': vertexonly,
-						'layers': [feature]
-					});
-					// What if this is the same?
-					res = {'minDist': latlng.distanceTo(newLatlng), 'minPoint': newLatlng};
 
 				// Unknown
 				} else {
