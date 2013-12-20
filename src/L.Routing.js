@@ -227,11 +227,11 @@ L.Routing = L.Control.extend({
     var prev = marker._routing.prevMarker;
     var next = marker._routing.nextMarker;
 
-    if (this._waypoints._first && marker._leafletId === this._waypoints._first._leafletId) {
+    if (this._waypoints._first && marker._leaflet_id === this._waypoints._first._leaflet_id) {
       this._waypoints._first = next;
     }
 
-    if (this._waypoints._last && marker._leafletId === this._waypoints._last._leafletId) {
+    if (this._waypoints._last && marker._leaflet_id === this._waypoints._last._leaflet_id) {
       this._waypoints._last = prev;
     }
 
