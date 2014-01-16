@@ -1,8 +1,8 @@
 /*
-	Routing capability using the Leaflet framework
-	Copyright (c) 2013, Turistforeningen, Hans Kristian Flaatten
+  Routing capability using the Leaflet framework
+  Copyright (c) 2013, Turistforeningen, Hans Kristian Flaatten
 
-	https://github.com/Turistforeningen/leaflet-routing
+  https://github.com/Turistforeningen/leaflet-routing
 */
 
 var routing, data;
@@ -11,7 +11,7 @@ var routing, data;
   "use strict";
   jQuery(function($) {
     var api, apiKey, rUrl, sUrl, topo, map, snapping, inport, myRouter;
-    
+
     api = window.location.hash.substr(1).split('@');
     if (api.length === 2) {
       rUrl = 'http://' + api[1] + '/route/?coords='
@@ -20,7 +20,7 @@ var routing, data;
     } else {
       throw new Error('API auth failed');
     }
-    
+
     topo = L.tileLayer('http://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
       maxZoom: 16,
       attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
@@ -38,7 +38,7 @@ var routing, data;
       maxZoom: 16,
       attribution: '<a href="http://www.turistforeningen.no/">DNT</a>'
     });
-    
+
     map = new L.Map('map', {
       layers: [topo]
       ,center: new L.LatLng(61.5, 9)
@@ -54,7 +54,7 @@ var routing, data;
     }, {
       position: 'topleft'
     }).addTo(map);
-    
+
     // Import Layer
     inport = new L.layerGroup(null, {
       style: {
@@ -62,7 +62,7 @@ var routing, data;
         ,clickable:false
       }
     }).addTo(map);
-    
+
     // Snapping Layer
     snapping = new L.geoJson(null, {
       style: {
@@ -90,7 +90,7 @@ var routing, data;
       }
     });
     map.fire('moveend');
-    
+
     // Routing Function
     // @todo speed up geometryToLayer()
     myRouter = function(l1, l2, cb) {
@@ -102,7 +102,7 @@ var routing, data;
               // 14026
               var d1 = l1.distanceTo(layer._latlngs[0]);
               var d2 = l2.distanceTo(layer._latlngs[layer._latlngs.length-1]);
-              
+
               if (d1 < 10 && d2 < 10) {
                 return cb(null, layer);
               } else {
@@ -117,7 +117,7 @@ var routing, data;
         }
       });
     }
-    
+
     // Leaflet Routing Module
     routing = new L.Routing({
       position: 'topleft'
@@ -132,7 +132,7 @@ var routing, data;
     });
     map.addControl(routing);
     routing.draw(true); // enable drawing mode
-    
+
     $('#eta-export').hide();
     $('#eta-export').on('click', function() {
       var id = $('#eta-id').val();
@@ -155,7 +155,7 @@ var routing, data;
         });
       }
     });
-    
+
     $('#eta-import').on('click', function() {
       var id = $('#eta-id').val();
       if (!id) { alert('Ingen tp_id definert!'); return; }
@@ -166,7 +166,7 @@ var routing, data;
           $('#eta-import').hide();
           $('#eta-export').show();
           $('#eta-id').attr('readonly', 'readonly');
-          
+
           if (data.coords) {
             data.coords = data.coords.replace('LINESTRING(', '').replace(')', '').split(',');
             for (var i = 0; i < data.coords.length; i++) {
@@ -180,7 +180,7 @@ var routing, data;
         }
       });
     });
-    
+
     function fetchSsrAc(search, cb) {
       var result = [];
       $.ajax({
@@ -199,7 +199,7 @@ var routing, data;
         }
       });
     }
-    
+
     $('#ssr-search').typeahead({
       remote: {
         url: 'https://ws.geonorge.no/SKWS3Index/ssr/sok?navn=%QUERY*&epsgKode=4326&antPerSide=10',
@@ -218,12 +218,12 @@ var routing, data;
         }
       }
     });
-    
+
     $('#ssr-search').on('typeahead:selected', function(e, object) {
       var ll = new L.LatLng(object.lat, object.lng);
       map.panTo(ll);
       $('#ssr-search').val('');
     })
-    
+
   });
 }).call(this);
