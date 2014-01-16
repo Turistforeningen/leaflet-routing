@@ -140,6 +140,7 @@ var routing, data;
       if (confirm('Eksport til ETA vil overskrive eksisterende geometri!')) {
         routing.toGeoJSON(function(res) {
           var data = [];
+          res = res.coordinates; // only use the coordinates
           for (var i = 0; i < res.length; i++) {
             data.push(res[i][1] + ' ' + res[i][0]);
           }
