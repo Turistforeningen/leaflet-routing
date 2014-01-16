@@ -66,13 +66,13 @@ L.Routing = L.Control.extend({
   */
   ,onAdd: function (map) {
     this._map         = map;
-     this._container   = this._map._container;
+    this._container   = this._map._container;
     this._overlayPane = this._map._panes.overlayPane;
     this._popupPane   = this._map._panes.popupPane;
 
-    this._router    = this.options.routing.router;
-    this._segments  = new L.FeatureGroup().addTo(map);
-    this._waypoints = new L.FeatureGroup().addTo(map);
+    this._router      = this.options.routing.router;
+    this._segments    = new L.FeatureGroup().addTo(map);
+    this._waypoints   = new L.FeatureGroup().addTo(map);
     this._waypoints._first = null;
     this._waypoints._last = null;
 
