@@ -380,28 +380,38 @@ L.Routing = L.Control.extend({
   }
 
   /**
+   * Export route to GeoJSON
+   *
+   * @access public
+   *
+   * @return {@code object} GeoJSON object
    *
   */
-  ,toGeoJSON: function(cb) {
-    if (this._waypoints._first !== null) {
-      var latlngs = [];
+  ,toGeoJSON: function() {
+    var geojson = {type: "LineString", properties: {waypoints: []}, coordinates: []};
+    var current = this._waypoints._first;
 
-      function next(waypoint, done) {
-        if (waypoint._routing.nextMarker !== null) {
-          var tmp = waypoint._routing.nextLine.getLatLngs();
-          for (var i = 0; i < tmp.length; i++) {
-            latlngs.push([tmp[i].lat, tmp[i].lng]);
-          }
-          next(waypoint._routing.nextMarker, done);
+    if (current === null) { return geojson; }
+
+    geojson.properties.waypoints.push([current.getLatLng().lng, current.getLatLng().lat]);
+
+    while (current._routing.nextMarker) {
+      var next = current._routing.nextMarker
+      geojson.properties.waypoints.push([next.getLatLng().lng, next.getLatLng().lat]);
+
+      var tmp = current._routing.nextLine.getLatLngs();
+      for (var i = 0; i < tmp.length; i++) {
+        if (tmp[i].alt) {
+          geojson.coordinates.push(tmp[i].lng, tmp[i].lat, tmp[i].alt);
         } else {
-          done(latlngs);
+          geojson.coordinates.push(tmp[i].lng, tmp[i].lat);
         }
       }
 
-      next(this._waypoints._first, cb);
-    } else {
-      cb([]);
+      current = current._routing.nextMarker;
     }
+
+    return geojson
   }
 
   /**
