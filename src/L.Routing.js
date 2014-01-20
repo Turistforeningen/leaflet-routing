@@ -384,7 +384,7 @@ L.Routing = L.Control.extend({
    *
    * @access public
    *
-   * @return {@code object} GeoJSON object
+   * @return <object> GeoJSON object
    *
   */
   ,toGeoJSON: function() {
