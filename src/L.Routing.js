@@ -402,9 +402,9 @@ L.Routing = L.Control.extend({
       var tmp = current._routing.nextLine.getLatLngs();
       for (var i = 0; i < tmp.length; i++) {
         if (tmp[i].alt) {
-          geojson.coordinates.push([tmp[i].lng, tmp[i].lat, tmp[i].alt]);
+          geojson.coordinates.push([tmp[i].lat, tmp[i].lng, tmp[i].alt]);
         } else {
-          geojson.coordinates.push([tmp[i].lng, tmp[i].lat]);
+          geojson.coordinates.push([tmp[i].lat, tmp[i].lng]);
         }
       }
 
@@ -412,6 +412,46 @@ L.Routing = L.Control.extend({
     }
 
     return geojson
+  }
+
+  ,loadGeoJSON: function(geojson, cb) {
+    console.log('loadGeoJSON');
+
+    //$this = this;
+
+    //var router = this._router;
+    //var i = 0;
+
+    //// Hijack the router
+    //this.router = function(m1, m2, cb) {
+    //  console.log('xrouter', m1, m2);
+    //  var res = {type: "LineString", coordinates: []};
+    //  while (!m2.equals(new L.latLng(geojson.coordinates[i]))) {
+    //    res.coordinates.push(geojson.coordinates[i]);
+    //    i++;
+    //  }
+    //  res.coordinates.push(geojson.coordinates[i]);
+    //  return cb(null, L.GeoJSON.geometryToLayer(res));
+    //}
+
+    var addWaypoint = function(i, cb) {
+      console.log('addWaypoint', i);
+
+      if (i === geojson.properties.waypoints.length) {
+        $this._router = router;
+        return cb(null);
+      }
+
+      var coords = geojson.properties.waypoints[i];
+      var marker = new L.Marker([coords[1], coords[0]]);
+      console.log(marker);
+      addWaypoint(i++, cb);
+      //$this.addWaypoint(marker, $this._waypoints._last, null, function(err, data) {
+      //  addWaypoint(i++, cb);
+      //});
+    }
+
+    addWaypoint(0, cb);
   }
 
   /**
