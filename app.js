@@ -138,21 +138,19 @@ var routing, data;
       var id = $('#eta-id').val();
       if (!id) { alert('Ingen tp_id definert!'); return; }
       if (confirm('Eksport til ETA vil overskrive eksisterende geometri!')) {
-        routing.toGeoJSON(function(res) {
-          var data = [];
-          res = res.coordinates; // only use the coordinates
-          for (var i = 0; i < res.length; i++) {
-            data.push(res[i][1] + ' ' + res[i][0]);
+        var coords = routing.toGeoJSON().coordinates;
+        var data = [];
+        for (var i = 0; i < coords.length; i++) {
+          data.push(coords[i][1] + ' ' + coords[i][0]);
+        }
+        data = 'LINESTRING(' + data.join(',') + ')';
+        $.post('http://mintur.ut.no/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
+          if (data.error) {
+            alert('Eksport feilet med feilkode ' + data.error);
+          } else if (data.success) {
+            window.location.href = 'http://mintur.ut.no/index.php?tp_id=' + id + '&tab=kart';
+            //alert('Eksport suksess!');
           }
-          data = 'LINESTRING(' + data.join(',') + ')';
-          $.post('http://mintur.ut.no/lib/ajax/post_geom.php?api_key=' + apiKey + '&tp_id=' + id, {coords: data}, function(data) {
-            if (data.error) {
-              alert('Eksport feilet med feilkode ' + data.error);
-            } else if (data.success) {
-              window.location.href = 'http://mintur.ut.no/index.php?tp_id=' + id + '&tab=kart';
-              //alert('Eksport suksess!');
-            }
-          });
         });
       }
     });
