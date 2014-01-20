@@ -402,9 +402,9 @@ L.Routing = L.Control.extend({
       var tmp = current._routing.nextLine.getLatLngs();
       for (var i = 0; i < tmp.length; i++) {
         if (tmp[i].alt) {
-          geojson.coordinates.push(tmp[i].lng, tmp[i].lat, tmp[i].alt);
+          geojson.coordinates.push([tmp[i].lng, tmp[i].lat, tmp[i].alt]);
         } else {
-          geojson.coordinates.push(tmp[i].lng, tmp[i].lat);
+          geojson.coordinates.push([tmp[i].lng, tmp[i].lat]);
         }
       }
 
