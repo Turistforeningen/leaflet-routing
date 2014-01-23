@@ -280,12 +280,16 @@ L.Routing = L.Control.extend({
   */
   ,routeWaypoint: function(marker, cb) {
     var i = 0;
+    var $this = this;
     var callback = function(err, data) {
       i++;
       if (i === 2) {
+        $this.fire('routing:routeWaypointEnd');
         cb(err, marker);
       }
     }
+
+    this.fire('routing:routeWaypointStart');
 
     this._routeSegment(marker._routing.prevMarker, marker, callback);
     this._routeSegment(marker, marker._routing.nextMarker, callback);
