@@ -350,14 +350,14 @@ L.Routing = L.Control.extend({
   ,_eachSegment: function(callback, context) {
     var thisArg = context || this;
     var marker = this.getFirst();
-    
+
     if (marker === null) { return; }
 
     while (marker._routing.nextMarker !== null) {
       var m1 = marker;
       var m2 = marker._routing.nextMarker;
       var line = marker._routing.nextLine;
-      
+
       callback.call(thisArg, m1, m2, line);
 
       marker = marker._routing.nextMarker;
@@ -440,11 +440,11 @@ L.Routing = L.Control.extend({
    */
   ,toPolyline: function() {
     var latLngs = [];
-    
+
     this._eachSegment(function(m1, m2, line) {
       latLngs = latLngs.concat(line.getLatLngs());
     });
-    
+
     return L.polyline(latLngs);
   }
 
