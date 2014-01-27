@@ -338,6 +338,33 @@ L.Routing = L.Control.extend({
   }
 
   /**
+   * Iterate over all segments and execute callback for each segment
+   *
+   * @access private
+   *
+   * @param <function> callback - function to call for each segment
+   * @param <object> context - callback execution context (this). Optional, default: this
+   *
+   * @return void
+  */
+  ,_eachSegment: function(callback, context) {
+    var thisArg = context || this;
+    var marker = this.getFirst();
+    
+    if (marker === null) { return; }
+
+    while (marker._routing.nextMarker !== null) {
+      var m1 = marker;
+      var m2 = marker._routing.nextMarker;
+      var line = marker._routing.nextLine;
+      
+      callback.call(thisArg, m1, m2, line);
+
+      marker = marker._routing.nextMarker;
+    }
+  }
+
+  /**
    * Fire events
    *
    * @access private
@@ -381,6 +408,44 @@ L.Routing = L.Control.extend({
   */
   ,getLast: function() {
     return this._waypoints._last;
+  }
+
+  /**
+   * Get all waypoints
+   *
+   * @access public
+   *
+   * @return <L.LatLng[]> all waypoints or empty array if none
+  */
+  ,getWaypoints: function() {
+    var latLngs = [];
+
+    this._eachSegment(function(m1) {
+      latLngs.push(m1.getLatLng());
+    });
+
+    if (this.getLast()) {
+      latLngs.push(this.getLast().getLatLng());
+    }
+
+    return latLngs;
+  }
+
+  /**
+   * Concatenates all route segments to a single polyline
+   *
+   * @access public
+   *
+   * @return <L.Polyline> polyline, with empty _latlngs when no route segments
+   */
+  ,toPolyline: function() {
+    var latLngs = [];
+    
+    this._eachSegment(function(m1, m2, line) {
+      latLngs = latLngs.concat(line.getLatLngs());
+    });
+    
+    return L.polyline(latLngs);
   }
 
   /**
