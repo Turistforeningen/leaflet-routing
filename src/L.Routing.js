@@ -453,10 +453,12 @@ L.Routing = L.Control.extend({
    *
    * @access public
    *
+   * @param <boolean> enforce2d - enforce 2DGeoJSON
+   *
    * @return <object> GeoJSON object
    *
   */
-  ,toGeoJSON: function() {
+  ,toGeoJSON: function(enforce2d) {
     var geojson = {type: "LineString", properties: {waypoints: []}, coordinates: []};
     var current = this._waypoints._first;
 
@@ -470,7 +472,7 @@ L.Routing = L.Control.extend({
 
       var tmp = current._routing.nextLine.getLatLngs();
       for (var i = 0; i < tmp.length; i++) {
-        if (tmp[i].alt) {
+        if (tmp[i].alt && (typeof enforce2d === 'undefined' || enforce2d === false)) {
           geojson.coordinates.push([tmp[i].lat, tmp[i].lng, tmp[i].alt]);
         } else {
           geojson.coordinates.push([tmp[i].lat, tmp[i].lng]);
