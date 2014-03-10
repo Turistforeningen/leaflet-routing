@@ -152,7 +152,7 @@ L.Routing = L.Control.extend({
    * @param <L.Marker> marker - new waypoint marker (can be ll)
    * @param <L.Marker> prev - previous waypoint marker
    * @param <L.Marker> next - next waypoint marker
-   * @param <Function> cb - callback method
+   * @param <Function> cb - callback method (err, marker)
    *
    * @return void
   */
@@ -501,25 +501,95 @@ L.Routing = L.Control.extend({
 
     if (current === null) { return geojson; }
 
-    geojson.properties.waypoints.push([current.getLatLng().lng, current.getLatLng().lat]);
+    // First waypoint marker
+    geojson.properties.waypoints.push({
+      coordinates: [current.getLatLng().lng, current.getLatLng().lat],
+      _index: 0
+    });
 
     while (current._routing.nextMarker) {
-      var next = current._routing.nextMarker
-      geojson.properties.waypoints.push([next.getLatLng().lng, next.getLatLng().lat]);
+      var next = current._routing.nextMarker;
 
+      // Line segment
       var tmp = current._routing.nextLine.getLatLngs();
       for (var i = 0; i < tmp.length; i++) {
         if (tmp[i].alt && (typeof enforce2d === 'undefined' || enforce2d === false)) {
-          geojson.coordinates.push([tmp[i].lat, tmp[i].lng, tmp[i].alt]);
+          geojson.coordinates.push([tmp[i].lng, tmp[i].lat, tmp[i].alt]);
         } else {
-          geojson.coordinates.push([tmp[i].lat, tmp[i].lng]);
+          geojson.coordinates.push([tmp[i].lng, tmp[i].lat]);
         }
       }
 
+      // Waypoint marker
+      geojson.properties.waypoints.push({
+        coordinates: [next.getLatLng().lng, next.getLatLng().lat],
+        _index: geojson.coordinates.length-1
+      });
+
+      // Next waypoint marker
       current = current._routing.nextMarker;
     }
 
     return geojson
+  }
+
+  /**
+   * Import route from GeoJSON
+   *
+   * @access public
+   *
+   * @param <object> geojson - GeoJSON object with waypoints
+   * @param <function> cb - callback method (err)
+   *
+   * @return undefined
+   *
+  */
+  ,loadGeoJSON: function(geojson, cb) {
+    var $this, oldRouter, index, waypoints;
+
+    $this = this;
+    index = 0;
+    oldRouter = $this._router;
+    waypoints = geojson.properties.waypoints;
+
+    // This is a fake router.
+    //
+    // It is currently not possible to add a waypoint with a known line segment
+    // manually. We are hijacking the router so that we can intercept the
+    // request and return the correct linesegment.
+    //
+    // It you want to fix this; please make a patch and submit a pull request on
+    // GitHub.
+    $this._router = function(m1, m2, cb) { var start =
+      waypoints[index-1]._index; var end = waypoints[index]._index+1;
+
+      L.geoJson({
+        type: 'LineString',
+        coordinates: geojson.coordinates.slice(start, end)
+      }).eachLayer(function(layer) {
+        return cb(null, layer);
+      });
+    };
+
+    // Clean up
+    end = function() {
+      $this._router = oldRouter; // Restore router
+      if (typeof cb === 'function') { cb(null); }
+    }
+
+    // Add waypoints
+    add = function() {
+      if (!waypoints[index]) { return end() }
+
+      var coords = waypoints[index].coordinates;
+      var prev = $this._waypoints._last;
+
+      $this.addWaypoint(L.latLng(coords[1], coords[0]), prev, null, function(err, m) {
+        add(++index);
+      });
+    }
+
+    add();
   }
 
   /**
