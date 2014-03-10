@@ -73,7 +73,7 @@ var geoJSON2D = routing.toGeoJSON(false);
 
 ## Copyright
 
-Copyright (c) 2013, Turistforeningen
+Copyright (c) 2014, Turistforeningen
 
 All rights reserved.
 
