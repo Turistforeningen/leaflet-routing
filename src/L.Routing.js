@@ -497,6 +497,60 @@ L.Routing = L.Control.extend({
   }
 
   /**
+   * Import route from GeoJSON
+   *
+   * @access public
+   *
+   * @param <object> geojson - GeoJSON object with waypoints
+   * @param <function> cb - callback method (err)
+   *
+   * @return undefined
+   *
+  */
+  ,loadGeoJSON: function(geojson, cb) {
+    var $this, oldRouter, index, waypoints;
+
+    $this = this;
+    index = 0;
+    oldRouter = $this._router;
+    waypoints = geojson.properties.waypoints;
+
+    // This is a fake router
+    // The L.Routing
+    $this._router = function(m1, m2, cb) {
+      var start = waypoints[index-1]._index;
+      var end = waypoints[index]._index+1;
+
+      L.geoJson({
+        type: 'LineString',
+        coordinates: geojson.coordinates.slice(start, end)
+      }).eachLayer(function(layer) {
+        return cb(null, layer);
+      });
+    };
+
+    // Clean up
+    end = function() {
+      $this._router = oldRouter; // Restore router
+      if (typeof cb === 'function') { cb(null); }
+    }
+
+    // Add waypoints
+    add = function() {
+      if (!waypoints[index]) { return end() }
+
+      var coords = waypoints[index].coordinates;
+      var prev = $this._waypoints._last;
+
+      $this.addWaypoint(L.latLng(coords[1], coords[0]), prev, null, function(err, m) {
+        add(++index);
+      });
+    }
+
+    add();
+  }
+
+  /**
    * Start (or continue) drawing
    *
    * Call this method in order to start or continue drawing. The drawing handler
