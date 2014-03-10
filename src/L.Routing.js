@@ -464,12 +464,16 @@ L.Routing = L.Control.extend({
 
     if (current === null) { return geojson; }
 
-    geojson.properties.waypoints.push([current.getLatLng().lng, current.getLatLng().lat]);
+    // First waypoint marker
+    geojson.properties.waypoints.push({
+      coordinates: [current.getLatLng().lng, current.getLatLng().lat],
+      _index: 0
+    });
 
     while (current._routing.nextMarker) {
-      var next = current._routing.nextMarker
-      geojson.properties.waypoints.push([next.getLatLng().lng, next.getLatLng().lat]);
+      var next = current._routing.nextMarker;
 
+      // Line segment
       var tmp = current._routing.nextLine.getLatLngs();
       for (var i = 0; i < tmp.length; i++) {
         if (tmp[i].alt && (typeof enforce2d === 'undefined' || enforce2d === false)) {
@@ -479,6 +483,13 @@ L.Routing = L.Control.extend({
         }
       }
 
+      // Waypoint marker
+      geojson.properties.waypoints.push({
+        coordinates: [next.getLatLng().lng, next.getLatLng().lat],
+        _index: geojson.coordinates.length-1
+      });
+
+      // Next waypoint marker
       current = current._routing.nextMarker;
     }
 
