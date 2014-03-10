@@ -515,11 +515,16 @@ L.Routing = L.Control.extend({
     oldRouter = $this._router;
     waypoints = geojson.properties.waypoints;
 
-    // This is a fake router
-    // The L.Routing
-    $this._router = function(m1, m2, cb) {
-      var start = waypoints[index-1]._index;
-      var end = waypoints[index]._index+1;
+    // This is a fake router.
+    //
+    // It is currently not possible to add a waypoint with a known line segment
+    // manually. We are hijacking the router so that we can intercept the
+    // request and return the correct linesegment.
+    //
+    // It you want to fix this; please make a patch and submit a pull request on
+    // GitHub.
+    $this._router = function(m1, m2, cb) { var start =
+      waypoints[index-1]._index; var end = waypoints[index]._index+1;
 
       L.geoJson({
         type: 'LineString',
