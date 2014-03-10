@@ -71,6 +71,17 @@ var geoJSON3D = routing.toGeoJSON();
 var geoJSON2D = routing.toGeoJSON(false);
 ```
 
+### Load GeoJSON
+```javascript
+routing.loadGeoJSON(geojson, function(err) {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log('Finished loading GeoJSON');
+  }
+});
+```
+
 ## Copyright
 
 Copyright (c) 2014, Turistforeningen
