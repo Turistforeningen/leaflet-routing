@@ -152,7 +152,7 @@ L.Routing = L.Control.extend({
    * @param <L.Marker> marker - new waypoint marker (can be ll)
    * @param <L.Marker> prev - previous waypoint marker
    * @param <L.Marker> next - next waypoint marker
-   * @param <Function> cb - callback method
+   * @param <Function> cb - callback method (err, marker)
    *
    * @return void
   */
