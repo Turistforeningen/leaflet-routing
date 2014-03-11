@@ -17,7 +17,7 @@ L.Routing = L.Control.extend({
 
   // CONSTANTS
   ,statics: {
-    VERSION: '0.1.0-dev'
+    VERSION: '0.1.1-dev'
   }
 
   // OPTIONS
