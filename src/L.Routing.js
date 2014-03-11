@@ -552,6 +552,9 @@ L.Routing = L.Control.extend({
     oldRouter = $this._router;
     waypoints = geojson.properties.waypoints;
 
+    // Set map bounds based on loaded geometry
+    $this._map.fitBounds(L.polyline(L.GeoJSON.coordsToLatLngs(geojson.coordinates)).getBounds());
+
     // This is a fake router.
     //
     // It is currently not possible to add a waypoint with a known line segment
