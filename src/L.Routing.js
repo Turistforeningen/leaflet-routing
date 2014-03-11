@@ -545,6 +545,16 @@ L.Routing = L.Control.extend({
    *
   */
   ,loadGeoJSON: function(geojson, cb) {
+    // Check for waypoints before processing geojson
+    if (!geojson.properties || !geojson.properties.waypoints) {
+      var msg = 'Invalid GeoJSON format. Missing waypoints markers.';
+      if (typeof cb === 'function') {
+        return cb(new Error(msg));
+      } else {
+        console.error(msg);
+      }
+    }
+
     var $this, oldRouter, index, waypoints;
 
     $this = this;
