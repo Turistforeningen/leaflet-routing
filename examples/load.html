@@ -32,7 +32,7 @@
   <script src="../src/L.Routing.Edit.js"></script>
   <script type="text/javascript">
     $.getJSON( "route.geojson", function( geojson ) {
-      var gk, topo, map, routing;
+      var gk, topo;
 
       gk = 'http://opencache.statkart.no/gatekeeper/gk';
       topo = L.tileLayer(gk + '/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
