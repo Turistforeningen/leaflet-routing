@@ -1,7 +1,7 @@
 Changelog
 =========
 
-### 0.1.0 March 11, 2014
+### 0.1.0 March 10, 2014
 
 * Implements `#loadGeoJSON()` method (#3)
 
