@@ -552,6 +552,9 @@ L.Routing = L.Control.extend({
     oldRouter = $this._router;
     waypoints = geojson.properties.waypoints;
 
+    // Set map bounds based on loaded geometry
+    $this._map.fitBounds(L.polyline(L.GeoJSON.coordsToLatLngs(geojson.coordinates)).getBounds());
+
     // This is a fake router.
     //
     // It is currently not possible to add a waypoint with a known line segment
@@ -563,12 +566,10 @@ L.Routing = L.Control.extend({
     $this._router = function(m1, m2, cb) { var start =
       waypoints[index-1]._index; var end = waypoints[index]._index+1;
 
-      L.geoJson({
+      return cb(null, L.GeoJSON.geometryToLayer({
         type: 'LineString',
         coordinates: geojson.coordinates.slice(start, end)
-      }).eachLayer(function(layer) {
-        return cb(null, layer);
-      });
+      }));
     };
 
     // Clean up
