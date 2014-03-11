@@ -563,12 +563,10 @@ L.Routing = L.Control.extend({
     $this._router = function(m1, m2, cb) { var start =
       waypoints[index-1]._index; var end = waypoints[index]._index+1;
 
-      L.geoJson({
+      return cb(null, L.GeoJSON.geometryToLayer({
         type: 'LineString',
         coordinates: geojson.coordinates.slice(start, end)
-      }).eachLayer(function(layer) {
-        return cb(null, layer);
-      });
+      }));
     };
 
     // Clean up
