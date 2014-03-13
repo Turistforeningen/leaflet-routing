@@ -44,6 +44,8 @@
       ,zoom: 13
     });
 
+    map.attributionControl.addAttribution('&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors');
+
     router = function(m1, m2, cb) {
       var proxy = 'http://www2.turistforeningen.no/routing.php?url=';
       var route = 'http://www.yournavigation.org/api/1.0/gosmore.php&format=geojson&v=foot&fast=1&layer=mapnik';
