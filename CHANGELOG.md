@@ -1,6 +1,18 @@
 Changelog
 =========
 
+### 0.2.0 (Unreadlesed)
+
+**Features**
+
+* Add option for overriding draw shortcuts (#23)
+* Disable shortcuts by setting `options.shortcut` to `false`.
+
+**Breaking changes**
+
+* Default shortcut key for draw enable is `d`
+* Default shortcut key for draw disable is `q`
+
 ### 0.1.1 March 11, 2014
 
 **Features**
