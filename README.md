@@ -3,7 +3,9 @@ Leaflet.Routing
 
 Leaflet.Routing is a routing controller for the popular Leaflet mapping
 framework. The module provides an intuitive interface for routing paths between
-waypoints using any user specified routing service.
+waypoints using any user specified routing service. A demo using the OSM data
+can be found
+[here](http://turistforeningen.github.io/leaflet-routing/examples/osm.html).
 
 ![Prototype Routing using Leaflet](https://raw.github.com/Turistforeningen/leaflet-routing/gh-pages/images/promo.gif)
 
