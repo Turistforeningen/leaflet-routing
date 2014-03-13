@@ -99,7 +99,7 @@ routing.loadGeoJSON(geojson, function(err) {
 
 ## Copyright
 
-Copyright (c) 2014, Turistforeningen
+Copyright (c) 2014, Den Norske Turistforening
 
 All rights reserved.
 
