@@ -85,7 +85,10 @@ L.Routing = L.Control.extend({
     //L.DomUtil.disableTextSelection();
     //this._tooltip = new L.Tooltip(this._map);
     //this._tooltip.updateContent({ text: L.drawLocal.draw.marker.tooltip.start });
-    L.DomEvent.addListener(this._container, 'keyup', this._keyupListener, this);
+
+    if (this.options.shortcut) {
+      L.DomEvent.addListener(this._container, 'keyup', this._keyupListener, this);
+    }
 
     this._draw = new L.Routing.Draw(this, {
       icons: this.options.icons
