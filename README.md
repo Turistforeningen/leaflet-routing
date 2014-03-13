@@ -13,7 +13,7 @@ waypoints using any user specified routing service.
 var routing = new L.Routing({
   position: 'topright'
   ,routing: {
-    router: myRouter
+    router: myRouterFunction
   }
   ,snapping: {
     layers: [snapping]
