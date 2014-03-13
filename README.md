@@ -16,7 +16,7 @@ var routing = new L.Routing({
     router: myRouterFunction
   }
   ,snapping: {
-    layers: [snapping]
+    layers: [mySnappingLayer]
     ,sensitivity: 15
     ,vertexonly: false
   }
