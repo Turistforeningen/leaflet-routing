@@ -37,6 +37,12 @@ L.Routing = L.Control.extend({
       ,sensitivity: 10   // snapping sensitivity
       ,vertexonly: false // vertex only snapping
     }
+    ,shortcut: {
+      draw: {
+        enable: 68,      // char code for 'd'
+        disable: 81      // char code for 'q'
+      }
+    }
   }
 
   /**
@@ -665,9 +671,11 @@ L.Routing = L.Control.extend({
    * @return void
   */
   ,_keyupListener: function (e) {
-    if (e.keyCode === 27) {
+    console.log(this.options.shortcut.draw);
+    console.log(e.keyCode);
+    if (e.keyCode === this.options.shortcut.draw.disable) {
       this._draw.disable();
-    } else if (e.keyCode === 77) {
+    } else if (e.keyCode === this.options.shortcut.draw.enable) {
       this._draw.enable();
     }
   }
