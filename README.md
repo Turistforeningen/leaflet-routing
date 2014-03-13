@@ -20,6 +20,12 @@ var routing = new L.Routing({
     ,sensitivity: 15
     ,vertexonly: false
   }
+  ,shortcut: {
+    draw: {
+      enable: 68    // 'd'
+      ,disable: 81  // 'q'
+    }
+  }
 });
 map.addControl(routing);
 ```
