@@ -1,7 +1,9 @@
-Routing in Leaflet
-==================
+Leaflet.Routing
+===============
 
-Research and development of a Leaflet.js routing module. The module will be capable of the routing markers and returning geojson in various ways.
+Leaflet.Routing is a routing controller for the popular Leaflet mapping
+framework. The module provides an intuitive interface for routing paths between
+waypoints using any user specified routing service.
 
 ![Prototype Routing using Leaflet](https://raw.github.com/Turistforeningen/leaflet-routing/gh-pages/images/promo.gif)
 
