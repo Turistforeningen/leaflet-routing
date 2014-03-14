@@ -30,12 +30,30 @@
   <script src="../src/L.Routing.Draw.js"></script>
   <script src="../src/L.Routing.Edit.js"></script>
   <script type="text/javascript">
-    var gk, topo;
+    var gk, topo, thunderforest, osm, waymarkedtrails;
 
     gk = 'http://opencache.statkart.no/gatekeeper/gk';
     topo = L.tileLayer(gk + '/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
       maxZoom: 16,
-      attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
+      attribution: 'tiles &copy; <a href="http://www.statkart.no/">Statens kartverk</a>'
+    });
+
+    thunderforest = new L.TileLayer('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: 'tiles &copy; <a target="_blank" href="http://www.thunderforest.com">Thunderforest</a> '
+              + '(<a target="_blank" href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a>)'
+    });
+
+    osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: 'tiles &copy; <a target="_blank" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+
+    waymarkedtrails = L.tileLayer('http://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      opacity: 0.5,
+      attribution: 'overlay &copy; <a target="_blank" href="http://hiking.waymarkedtrails.org">Waymarked Trails</a> '
+              + '(<a target="_blank" href="http://creativecommons.org/licenses/by-sa/3.0/de/deed.en">CC-BY-SA 3.0 DE</a>)'
     });
 
     map = new L.Map('map', {
@@ -44,7 +62,15 @@
       ,zoom: 13
     });
 
-    map.attributionControl.addAttribution('&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors');
+    L.control.layers({
+        'Topo (Kartverket)': topo,
+        'Landscape (Thunderforest)': thunderforest,
+        'OpenStreetMap': osm
+    }, {
+        'Hiking (Waymarked Trails)': waymarkedtrails
+    }).addTo(map);
+
+    //map.attributionControl.addAttribution('&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors');
 
     router = function(m1, m2, cb) {
       var proxy = 'http://www2.turistforeningen.no/routing.php?url=';
