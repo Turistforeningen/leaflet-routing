@@ -560,7 +560,7 @@ L.Routing = L.Control.extend({
       if (typeof cb === 'function') {
         return cb(new Error(msg));
       } else {
-        console.error(msg);
+        return console.error(msg);
       }
     }
 
