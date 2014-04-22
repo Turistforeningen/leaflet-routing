@@ -78,8 +78,8 @@
       var params = '&flat=' + m1.lat + '&flon=' + m1.lng + '&tlat=' + m2.lat + '&tlon=' + m2.lng;
       $.getJSON(proxy + route + params, function(geojson, status) {
         if (!geojson || !geojson.coordinates || geojson.coordinates.length === 0) {
-          if (typeof console.error === 'function') {
-            console.error('OSM router failed', geojson);
+          if (typeof console.log === 'function') {
+            console.log('OSM router failed', geojson);
           }
           return cb(new Error());
         }
