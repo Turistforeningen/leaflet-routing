@@ -548,25 +548,47 @@ L.Routing = L.Control.extend({
    * @access public
    *
    * @param <object> geojson - GeoJSON object with waypoints
+   * @param <object> opts - parsing options
    * @param <function> cb - callback method (err)
    *
    * @return undefined
    *
   */
-  ,loadGeoJSON: function(geojson, cb) {
-    // Check for waypoints before processing geojson
-    if (!geojson.properties || !geojson.properties.waypoints) {
-      var msg = 'Invalid GeoJSON format. Missing waypoints markers.';
-      if (typeof cb === 'function') {
-        return cb(new Error(msg));
-      } else {
-        return console.error(msg);
-      }
-    }
-
+  ,loadGeoJSON: function(geojson, opts, cb) {
     var $this, oldRouter, index, waypoints;
 
     $this = this;
+
+    // Check for optional options parameter
+    if (typeof opts === 'function' || typeof opts === 'undefined') {
+      cb = opts;
+      opts = {}
+    }
+
+    // Set default options
+    opts.waypointDistance = opts.waypointDistance || 50;
+    opts.fitBounds = opts.fitBounds || true;
+
+    // Check for waypoints before processing geojson
+    if (!geojson.properties || !geojson.properties.waypoints) {
+      if (!geojson.properties) { geojson.properties = {} };
+      geojson.properties.waypoints = [];
+
+      for (var i = 0; i < geojson.coordinates.length; i = i + opts.waypointDistance) {
+        geojson.properties.waypoints.push({
+          _index: i,
+          coordinates: geojson.coordinates[i].slice(0, 2)
+        });
+      }
+
+      if (i > geojson.coordinates.length-1) {
+        geojson.properties.waypoints.push({
+          _index: geojson.coordinates.length-1,
+          coordinates: geojson.coordinates[geojson.coordinates.length-1].slice(0, 2)
+        });
+      }
+    }
+
     index = 0;
     oldRouter = $this._router;
     waypoints = geojson.properties.waypoints;
