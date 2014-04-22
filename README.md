@@ -89,10 +89,17 @@ var geoJSON2D = routing.toGeoJSON(false);
 
 ### Load GeoJSON
 
+Load GeoJSON with and without `properties.waypoints`.
+
+#### Options
+
+* `number` waypointDistance - distance between inserted waypoints for GeoJSON without waypoints.
+* `boolean` fitBounds - fit map arround loaded GeoJSON.
+
 ```javascript
-routing.loadGeoJSON(geojson, function(err) {
+routing.loadGeoJSON(geojson, [options], function(err) {
   if (err) {
-    console.error(err);
+    console.log(err);
   } else {
     console.log('Finished loading GeoJSON');
   }
