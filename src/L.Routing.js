@@ -615,7 +615,10 @@ L.Routing = L.Control.extend({
       $this._router = oldRouter; // Restore router
       // Set map bounds based on loaded geometry
       setTimeout(function() {
-        $this._map.fitBounds(L.polyline(L.GeoJSON.coordsToLatLngs(geojson.coordinates)).getBounds());
+        if (opts.fitBounds) {
+          $this._map.fitBounds(L.polyline(L.GeoJSON.coordsToLatLngs(geojson.coordinates)).getBounds());
+        }
+
         if (typeof cb === 'function') { cb(null); }
       }, 0);
     }
