@@ -6,6 +6,7 @@ Changelog
 **Features**
 
 * Add option for overriding draw shortcuts (#23)
+* Add option for disabling drawing marker (#18)
 * Disable shortcuts by setting `options.shortcut` to `false`.
 * Add support for loading GeoJSON without waypoints (#16).
 
