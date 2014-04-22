@@ -27,6 +27,7 @@ L.Routing = L.Control.extend({
       start: new L.Icon.Default()
       ,end: new L.Icon.Default()
       ,normal: new L.Icon.Default()
+      ,draw: new L.Icon.Default()
     }
     ,zIndexOffset: 2000
     ,routing: {
