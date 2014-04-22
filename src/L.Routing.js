@@ -149,7 +149,7 @@ L.Routing = L.Control.extend({
 
   ,_waypointClickHandler: function(e) {
     this.removeWaypoint(e.marker, function() {
-      console.log(arguments);
+      // console.log(arguments);
     });
   }
 
@@ -699,8 +699,6 @@ L.Routing = L.Control.extend({
    * @return void
   */
   ,_keyupListener: function (e) {
-    console.log(this.options.shortcut.draw);
-    console.log(e.keyCode);
     if (e.keyCode === this.options.shortcut.draw.disable) {
       this._draw.disable();
     } else if (e.keyCode === this.options.shortcut.draw.enable) {
