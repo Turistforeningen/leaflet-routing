@@ -148,6 +148,13 @@ L.Routing = L.Control.extend({
     delete this.options;
   }
 
+  /**
+   * Called whenever a waypoint is clicked
+   *
+   * @access private
+   *
+   * @param <L.Event> e - click event
+  */
   ,_waypointClickHandler: function(e) {
     this.removeWaypoint(e.marker, function() {
       // console.log(arguments);
