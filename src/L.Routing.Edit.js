@@ -94,7 +94,7 @@ L.Routing.Edit = L.Handler.extend({
     if (!this._map) { return; }
 
     if (!this._mouseMarker) {
-      this._mouseMarker = L.marker(this._map.getCenter(), {
+      this._mouseMarker = new L.Marker(this._map.getCenter(), {
         icon: L.divIcon({
           className: 'line-mouse-marker'
           ,iconAnchor: [5, 5]
