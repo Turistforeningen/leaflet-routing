@@ -91,17 +91,8 @@ L.Routing = L.Control.extend({
       L.DomEvent.addListener(this._container, 'keyup', this._keyupListener, this);
     }
 
-    this._draw = new L.Routing.Draw(this, {
-      icons: this.options.icons
-      ,zIndexOffset: this.options.zIndexOffset
-      ,snapping: this.options.snapping
-    });
-
-    this._edit = new L.Routing.Edit(this, {
-      icons: this.options.icons
-      ,zIndexOffset: this.options.zIndexOffset
-      ,snapping: this.options.snapping
-    });
+    this._draw = new L.Routing.Draw(this, this.options);
+    this._edit = new L.Routing.Edit(this, this.options);
     this._edit.enable();
 
     this.on('waypoint:click', this._waypointClickHandler, this)
