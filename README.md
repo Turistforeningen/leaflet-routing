@@ -9,6 +9,11 @@ can be found
 
 ![Prototype Routing using Leaflet](https://raw.github.com/Turistforeningen/leaflet-routing/gh-pages/images/promo.gif)
 
+## Features
+
+* Route handling interface for Leaflet
+* Use your own routing backend, or OSM
+
 ## Usage
 
 ```javascript
