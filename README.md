@@ -22,6 +22,10 @@ var routing = new L.Routing({
   ,routing: {
     router: myRouterFunction
   }
+  ,tooltips: {
+    waypoint: 'Waypoint. Drag to move; Click to remove.',
+    segment: 'Drag to create a new waypoint'
+  }
   ,snapping: {
     layers: [mySnappingLayer]
     ,sensitivity: 15
