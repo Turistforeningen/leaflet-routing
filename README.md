@@ -111,6 +111,43 @@ routing.loadGeoJSON(geojson, [options], function(err) {
 });
 ```
 
+## Events
+
+All events form Leaflet.Routing is prefixed with `routing:`.
+
+### Usage
+
+```javascript
+routing.on('routing:someEvent', function() {
+  console.log('routing:someEvent triggered');
+});
+```
+
+### L.Routing Events
+
+| Event name | Description |
+|------------|-------------|
+| `routing:draw-start` | Fired when drawing mode is started |
+| `routing:draw-new` | Fired when drawing mode is started for a new route |
+| `routing:draw-continue` | Fired when drawing mode is started for an existing route |
+| `routing:draw-stop` | Fired when drawing mode ends |
+| `routing:edit-start` | Fired when editing mode starts |
+| `routing:edit-end` | Fired when editing mode ends |
+
+### Waypoint Events
+
+| Event name | Description |
+|------------|-------------|
+| `routing:routeWaypointStart` | Fired when a new or existing waypoint is created or moved |
+| `routing:routeWaypointEnd` | Fired when routing is finished for new or moved waypoint |
+
+### Segment Events
+
+| Event name | Description |
+|------------|-------------|
+| `routing:rerouteAllSegmentsStart` | Fired when rerouting of all segments starts |
+| `routing:rerouteAllSegmentsEnd` | Fired when rerouting of all segments completes |
+
 ## Copyright
 
 Copyright (c) 2014, Den Norske Turistforening
