@@ -276,7 +276,7 @@ L.Routing.Draw = L.Handler.extend({
     if (this.options.snapping) {
       latlng = L.LineUtil.snapToLayers(latlng, null, this.options.snapping);
     }
-    marker = new L.Marker(latlng);
+    marker = new L.Marker(latlng, {title: this.options.tooltips.waypoint });
     last = this._parent.getLast();
 
     this._trailer.setLatLngs([latlng, latlng]);
