@@ -23,6 +23,10 @@ L.Routing = L.Control.extend({
   // OPTIONS
   ,options: {
     position: 'topleft'
+    ,tooltips: {
+      waypoint: 'Waypoint. Drag to move; Click to remove.',
+      segment: 'Drag to create a new waypoint'
+    }
     ,icons: {
       start: new L.Icon.Default()
       ,end: new L.Icon.Default()
@@ -91,17 +95,8 @@ L.Routing = L.Control.extend({
       L.DomEvent.addListener(this._container, 'keyup', this._keyupListener, this);
     }
 
-    this._draw = new L.Routing.Draw(this, {
-      icons: this.options.icons
-      ,zIndexOffset: this.options.zIndexOffset
-      ,snapping: this.options.snapping
-    });
-
-    this._edit = new L.Routing.Edit(this, {
-      icons: this.options.icons
-      ,zIndexOffset: this.options.zIndexOffset
-      ,snapping: this.options.snapping
-    });
+    this._draw = new L.Routing.Draw(this, this.options);
+    this._edit = new L.Routing.Edit(this, this.options);
     this._edit.enable();
 
     this.on('waypoint:click', this._waypointClickHandler, this)
@@ -175,7 +170,7 @@ L.Routing = L.Control.extend({
   */
   ,addWaypoint: function(marker, prev, next, cb) {
     if (marker instanceof L.LatLng) {
-      marker = new L.Marker(marker);
+      marker = new L.Marker(marker, { title: this.options.tooltips.waypoint });
     }
 
     marker._routing = {
