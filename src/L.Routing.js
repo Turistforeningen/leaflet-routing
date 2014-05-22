@@ -23,6 +23,10 @@ L.Routing = L.Control.extend({
   // OPTIONS
   ,options: {
     position: 'topleft'
+    ,tooltips: {
+      waypoint: 'Waypoint. Drag to move; Click to remove.',
+      segment: 'Drag to create a new waypoint'
+    }
     ,icons: {
       start: new L.Icon.Default()
       ,end: new L.Icon.Default()
