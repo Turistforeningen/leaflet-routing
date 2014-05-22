@@ -104,6 +104,7 @@ L.Routing.Edit = L.Handler.extend({
         ,draggable: true
         ,opacity: 0
         ,zIndexOffset: this.options.zIndexOffset
+        ,title: this.options.tooltips.segment
       });
     }
     this._mouseMarker.addTo(this._map);
