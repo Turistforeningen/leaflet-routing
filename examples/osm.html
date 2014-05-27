@@ -29,6 +29,7 @@
   <script src="../src/L.Routing.Storage.js"></script>
   <script src="../src/L.Routing.Draw.js"></script>
   <script src="../src/L.Routing.Edit.js"></script>
+  <script src="http://tyrasd.github.io/osmtogeojson/osmtogeojson.js"></script>
   <script type="text/javascript">
     var gk, topo, thunderforest, osm, waymarkedtrails;
 
@@ -70,8 +71,42 @@
         'Hiking (Waymarked Trails)': waymarkedtrails
     }).addTo(map);
 
-    //map.attributionControl.addAttribution('&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors');
+    map.attributionControl.addAttribution('data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors');
 
+    // Snapping Layer
+    snapping = new L.geoJson(null, {
+      style: {
+        opacity:0
+        ,clickable:false
+      }
+    }).addTo(map);
+    map.on('moveend', function() {
+      if (map.getZoom() > 12) {
+        var proxy = 'http://www2.turistforeningen.no/routing.php?url=';
+        var route = 'http://www.openstreetmap.org/api/0.6/map';
+        var params = '&bbox=' + map.getBounds().toBBoxString() + '&1=2';
+        $.get(proxy + route + params).always(function(osm, status) {
+          if (status === 'success' && typeof osm === 'object') {
+            var geojson = osmtogeojson(osm);
+
+            snapping.clearLayers();
+            for (var i = 0; i < geojson.features.length; i++) {
+              var feat = geojson.features[i];
+              if (feat.geometry.type === 'LineString' && feat.properties.tags.highway) {
+                snapping.addData(geojson.features[i]);
+              }
+            }
+          } else {
+            console.log('Could not load snapping data');
+          }
+        });
+      } else {
+        snapping.clearLayers();
+      }
+    });
+    map.fire('moveend');
+
+    // OSM Router
     router = function(m1, m2, cb) {
       var proxy = 'http://www2.turistforeningen.no/routing.php?url=';
       var route = 'http://www.yournavigation.org/api/1.0/gosmore.php&format=geojson&v=foot&fast=1&layer=mapnik';
@@ -94,6 +129,11 @@
       }
       ,snapping: {
         layers: []
+      }
+      ,snapping: {
+        layers: [snapping]
+        ,sensitivity: 15
+        ,vertexonly: false
       }
     });
     map.addControl(routing);
