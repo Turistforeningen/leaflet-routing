@@ -292,12 +292,14 @@ L.Routing = L.Control.extend({
   */
   ,routeWaypoint: function(marker, cb) {
     var i = 0;
+    var firstErr;
     var $this = this;
     var callback = function(err, data) {
       i++;
+      firstErr = firstErr || err;
       if (i === 2) {
-        $this.fire('routing:routeWaypointEnd');
-        cb(err, marker);
+        $this.fire('routing:routeWaypointEnd', { err: firstErr });
+        cb(firstErr, marker);
       }
     }
 
@@ -321,14 +323,16 @@ L.Routing = L.Control.extend({
   ,rerouteAllSegments: function(cb) {
     var numSegments = this.getWaypoints().length - 1;
     var callbackCount = 0;
+    var firstErr;
     var $this = this;
 
     var callback = function(err, data) {
       callbackCount++;
+      firstErr = firstErr || err;
       if (callbackCount >= numSegments) {
-        $this.fire('routing:rerouteAllSegmentsEnd');
+        $this.fire('routing:rerouteAllSegmentsEnd', { err: firstErr });
         if (cb) {
-          cb(err);
+          cb(firstErr);
         }
       }
     };
@@ -382,7 +386,7 @@ L.Routing = L.Control.extend({
       m1._routing.nextLine = layer;
       m2._routing.prevLine = layer;
 
-      return cb(null, layer);
+      return cb(err, layer);
     });
   }
 
