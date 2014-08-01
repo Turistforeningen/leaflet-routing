@@ -111,7 +111,7 @@ L.Routing.Edit = L.Handler.extend({
 
     if (!this._trailer1) {
       var ll = this._map.getCenter();
-      var style = {opacity: 0.0,clickable: false};
+      var style = L.extend({opacity: 0.0,clickable: false}, this.options.styles.trailer);
       this._trailer1 = new L.Polyline([ll, ll], style);
       this._trailer2 = new L.Polyline([ll, ll], style);
     }

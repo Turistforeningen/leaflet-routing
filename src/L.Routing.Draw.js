@@ -113,6 +113,7 @@ L.Routing.Draw = L.Handler.extend({
         opacity: 0.2
         ,clickable: false
       });
+      this._trailer.setStyle(this.options.styles.trailer);
     }
 
     this._parent.on('waypoint:mouseover', this._catchWaypointEvent, this);
