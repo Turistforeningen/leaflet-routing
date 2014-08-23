@@ -109,11 +109,12 @@ L.Routing.Draw = L.Handler.extend({
     // Trailing line
     if (!this._trailer) {
       var ll = this._map.getCenter();
-      this._trailer = new L.Polyline([ll, ll], {
-        opacity: 0.2
+      this._trailerOpacity = this.options.styles.trailer.opacity || 0.2;
+      var style = L.extend({}, this.options.styles.trailer, {
+        opacity: this._trailerOpacity
         ,clickable: false
       });
-      this._trailer.setStyle(this.options.styles.trailer);
+      this._trailer = new L.Polyline([ll, ll], style);
     }
 
     this._parent.on('waypoint:mouseover', this._catchWaypointEvent, this);
@@ -227,7 +228,7 @@ L.Routing.Draw = L.Handler.extend({
   ,_show: function() {
     this._hidden = false;
     this._marker.setOpacity(this.options.icons.draw ? 1.0 : 0.0);
-    this._trailer.setStyle({opacity: 0.2});
+    this._trailer.setStyle({opacity: this._trailerOpacity});
   }
 
   /**

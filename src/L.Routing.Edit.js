@@ -111,7 +111,8 @@ L.Routing.Edit = L.Handler.extend({
 
     if (!this._trailer1) {
       var ll = this._map.getCenter();
-      var style = L.extend({opacity: 0.0,clickable: false}, this.options.styles.trailer);
+      this._trailerOpacity = this.options.styles.trailer.opacity || 0.2;
+      var style = L.extend({}, this.options.styles.trailer, {opacity: 0.0,clickable: false});
       this._trailer1 = new L.Polyline([ll, ll], style);
       this._trailer2 = new L.Polyline([ll, ll], style);
     }
@@ -370,10 +371,10 @@ L.Routing.Edit = L.Handler.extend({
         return;
       } else {
         if (next !== null) {
-          this._trailer1.setStyle({opacity: 0.2});
+          this._trailer1.setStyle({opacity: this._trailerOpacity});
         }
         if (prev !== null) {
-          this._trailer2.setStyle({opacity: 0.2});
+          this._trailer2.setStyle({opacity: this._trailerOpacity});
         }
       }
     }
