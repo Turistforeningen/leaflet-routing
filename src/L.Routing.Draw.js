@@ -90,8 +90,6 @@ L.Routing.Draw = L.Handler.extend({
    * @access private
    *
    * @return void
-   *
-   * @todo hide and style the trailer!
   */
   ,_addHooks: function() {
     if (!this._map) { return; }
@@ -111,7 +109,7 @@ L.Routing.Draw = L.Handler.extend({
       var ll = this._map.getCenter();
       this._trailerOpacity = this.options.styles.trailer.opacity || 0.2;
       var style = L.extend({}, this.options.styles.trailer, {
-        opacity: this._trailerOpacity
+        opacity: 0.0
         ,clickable: false
       });
       this._trailer = new L.Polyline([ll, ll], style);
@@ -228,7 +226,29 @@ L.Routing.Draw = L.Handler.extend({
   ,_show: function() {
     this._hidden = false;
     this._marker.setOpacity(this.options.icons.draw ? 1.0 : 0.0);
-    this._trailer.setStyle({opacity: this._trailerOpacity});
+    this._showTrailer();
+  }
+
+  /**
+   * Show trailer when hidden
+   *
+   * @access private
+   *
+   * @return void
+  */
+  ,_showTrailer: function() {
+    if (this._trailer.options.opacity === 0.0) {
+      this._trailer.setStyle({opacity: this._trailerOpacity});
+    }
+  }
+
+  /**
+   * Set trailing guide line
+   *
+  */
+  ,_setTrailer: function(fromLatLng, toLatLng) {
+      this._trailer.setLatLngs([fromLatLng, toLatLng]);
+      this._showTrailer();
   }
 
   /**
@@ -254,7 +274,7 @@ L.Routing.Draw = L.Handler.extend({
 
 
     if (last !== null) {
-      this._trailer.setLatLngs([last.getLatLng(), latlng]);
+      this._setTrailer(last.getLatLng(), latlng);
     };
   }
 
@@ -281,7 +301,7 @@ L.Routing.Draw = L.Handler.extend({
     marker = new L.Marker(latlng, {title: this.options.tooltips.waypoint });
     last = this._parent.getLast();
 
-    this._trailer.setLatLngs([latlng, latlng]);
+    this._setTrailer(latlng, latlng);
     this._parent.addWaypoint(marker, last, null, function(err, data) {
       // console.log(err, data);
     });
