@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Styling example</title>
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
+  <!--[if lte IE 8]><link rel="stylesheet" href="libs/leaflet/leaflet.ie.css" /><![endif]-->
+  <link rel="stylesheet" href="../app.css" />
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38558206-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+  <script src="route.geojson" type="application/json" id="json"></script>
+  <script src="../src/utils/LineUtil.Snapping.js"></script>
+  <script src="../src/utils/Marker.Snapping.js"></script>
+  <script src="../src/L.Routing.js"></script>
+  <script src="../src/L.Routing.Storage.js"></script>
+  <script src="../src/L.Routing.Draw.js"></script>
+  <script src="../src/L.Routing.Edit.js"></script>
+  <script type="text/javascript">
+      var gk, topo, count = 0;
+
+      gk = 'http://opencache.statkart.no/gatekeeper/gk';
+      topo = L.tileLayer(gk + '/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
+        maxZoom: 16,
+        attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
+      });
+
+      map = new L.Map('map', {
+        layers: [topo]
+        ,center: new L.LatLng(61.49964563794811, 8.721771240234375)
+        ,zoom: 13
+      });
+
+      routing = new L.Routing({
+        position: 'topleft'
+        ,routing: {
+          router: function(m1, m2, cb) { 
+            // fake router 
+            if (++count % 3 === 0) {
+              cb(new Error('Fake router, every third line an error')); 
+            } else {
+              cb(null, L.polyline([m1, m2]));
+            }
+          }
+        }
+        ,snapping: {
+          layers: []
+        }
+        ,styles: {
+          trailer: {
+              dashArray: [10, 10],
+              color: 'darkgreen',
+              opacity: 0.6
+          },
+          track: {
+              color: 'darkgreen',
+              opacity: 0.8,
+              weight: 7
+          },
+          nodata: {
+              color: 'darkred'
+          }
+        }
+      });
+      map.addControl(routing);
+
+      routing.draw();
+  </script>
+</body>
+</html>
