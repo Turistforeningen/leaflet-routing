@@ -33,6 +33,11 @@ L.Routing = L.Control.extend({
       ,normal: new L.Icon.Default()
       ,draw: new L.Icon.Default()
     }
+    ,styles: {
+      trailer: {}
+      ,track: {}
+      ,nodata: {}
+    }
     ,zIndexOffset: 2000
     ,routing: {
       router: null       // function (<L.Latlng> l1, <L.Latlng> l2, <Function> cb)
@@ -370,7 +375,9 @@ L.Routing = L.Control.extend({
 
     this._router(m1.getLatLng(), m2.getLatLng(), function(err, layer) {
       if (typeof layer === 'undefined') {
-        var layer = new L.Polyline([m1.getLatLng(), m2.getLatLng()]);
+        var layer = new L.Polyline([m1.getLatLng(), m2.getLatLng()], $this.options.styles.nodata);
+      } else {
+        layer.setStyle($this.options.styles.track);
       }
 
       layer._routing = {

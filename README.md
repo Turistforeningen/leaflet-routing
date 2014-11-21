@@ -27,6 +27,11 @@ var routing = new L.Routing({
     waypoint: 'Waypoint. Drag to move; Click to remove.',
     segment: 'Drag to create a new waypoint'
   }
+  ,styles: {     // see http://leafletjs.com/reference.html#polyline-options
+    trailer: {}  // drawing line
+    ,track: {}   // calculated route result
+    ,nodata: {}  // line when no result (error)
+  }
   ,snapping: {
     layers: [mySnappingLayer]
     ,sensitivity: 15
