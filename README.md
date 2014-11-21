@@ -1,5 +1,6 @@
 Leaflet.Routing
 ===============
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Turistforeningen/leaflet-routing?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Leaflet.Routing is a routing controller for the popular Leaflet mapping
 framework. The module provides an intuitive interface for routing paths between
