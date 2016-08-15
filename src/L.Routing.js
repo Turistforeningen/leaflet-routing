@@ -9,51 +9,50 @@
  *
  * @todo use L.Class.extend instead?
 */
-
 L.Routing = L.Control.extend({
 
   // INCLUDES
-  includes: [L.Mixin.Events]
+  includes: [L.Mixin.Events],
 
   // CONSTANTS
-  ,statics: {
+  statics: {
     VERSION: '0.1.1-dev'
-  }
+  },
 
   // OPTIONS
-  ,options: {
-    position: 'topleft'
-    ,tooltips: {
+  options: {
+    position: 'topleft',
+    tooltips: {
       waypoint: 'Waypoint. Drag to move; Click to remove.',
       segment: 'Drag to create a new waypoint'
-    }
-    ,icons: {
-      start: new L.Icon.Default()
-      ,end: new L.Icon.Default()
-      ,normal: new L.Icon.Default()
-      ,draw: new L.Icon.Default()
-    }
-    ,styles: {
-      trailer: {}
-      ,track: {}
-      ,nodata: {}
-    }
-    ,zIndexOffset: 2000
-    ,routing: {
+    },
+    icons: {
+      start: new L.Icon.Default(),
+      end: new L.Icon.Default(),
+      normal: new L.Icon.Default(),
+      draw: new L.Icon.Default()
+    },
+    styles: {
+      trailer: {},
+      track: {},
+      nodata: {}
+    },
+    zIndexOffset: 2000,
+    routing: {
       router: null       // function (<L.Latlng> l1, <L.Latlng> l2, <Function> cb)
-    }
-    ,snapping: {
-      layers: []         // layers to snap to
-      ,sensitivity: 10   // snapping sensitivity
-      ,vertexonly: false // vertex only snapping
-    }
-    ,shortcut: {
+    },
+    snapping: {
+      layers: [],         // layers to snap to
+      sensitivity: 10,   // snapping sensitivity
+      vertexonly: false // vertex only snapping
+    },
+    shortcut: {
       draw: {
         enable: 68,      // char code for 'd'
         disable: 81      // char code for 'q'
       }
     }
-  }
+  },
 
   /**
    * Routing Constructor
@@ -64,12 +63,12 @@ L.Routing = L.Control.extend({
    *
    * @todo render display of segments and waypoints
   */
-  ,initialize: function (options) {
+  initialize: function (options) {
     this._editing = false;
     this._drawing = false;
 
     L.Util.setOptions(this, options);
-  }
+  },
 
   /**
    * Called when controller is added to map
@@ -80,7 +79,7 @@ L.Routing = L.Control.extend({
    *
    * @return <HTMLElement> container
   */
-  ,onAdd: function (map) {
+  onAdd: function (map) {
     this._map         = map;
     this._container   = this._map._container;
     this._overlayPane = this._map._panes.overlayPane;
@@ -104,7 +103,7 @@ L.Routing = L.Control.extend({
     this._edit = new L.Routing.Edit(this, this.options);
     this._edit.enable();
 
-    this.on('waypoint:click', this._waypointClickHandler, this)
+    this.on('waypoint:click', this._waypointClickHandler, this);
     this._segments.on('mouseover'    , this._fireSegmentEvent, this);
     this._edit.on('segment:mouseout' , this._fireSegmentEvent, this);
     this._edit.on('segment:dragstart', this._fireSegmentEvent, this);
@@ -113,7 +112,7 @@ L.Routing = L.Control.extend({
     var container = L.DomUtil.create('div', 'leaflet-routing');
 
     return container;
-  }
+  },
 
   /**
    * Called when controller is removed from map
@@ -122,10 +121,10 @@ L.Routing = L.Control.extend({
    *
    * @param <L.Map> map - map instance
   */
-  ,onRemove: function(map) {
+  onRemove: function(map) {
     //L.DomUtil.create('div', 'leaflet-routing'); <= delete this
 
-    this.off('waypoint:click', this._waypointClickHandler, this)
+    this.off('waypoint:click', this._waypointClickHandler, this);
     this._segments.off('mouseover'    , this._fireSegmentEvent, this);
     this._edit.off('segment:mouseout' , this._fireSegmentEvent, this);
     this._edit.off('segment:dragstart', this._fireSegmentEvent, this);
@@ -146,7 +145,7 @@ L.Routing = L.Control.extend({
     delete this._segments;
     delete this._waypoints;
     delete this.options;
-  }
+  },
 
   /**
    * Called whenever a waypoint is clicked
@@ -155,11 +154,11 @@ L.Routing = L.Control.extend({
    *
    * @param <L.Event> e - click event
   */
-  ,_waypointClickHandler: function(e) {
+  _waypointClickHandler: function(e) {
     this.removeWaypoint(e.marker, function() {
       // console.log(arguments);
     });
-  }
+  },
 
   /**
    * Add new waypoint to path
@@ -173,17 +172,17 @@ L.Routing = L.Control.extend({
    *
    * @return void
   */
-  ,addWaypoint: function(marker, prev, next, cb) {
+  addWaypoint: function(marker, prev, next, cb) {
     if (marker instanceof L.LatLng) {
       marker = new L.Marker(marker, { title: this.options.tooltips.waypoint });
     }
 
     marker._routing = {
-      prevMarker  : prev
-      ,nextMarker : next
-      ,prevLine   : null
-      ,nextLine   : null
-      ,timeoutID  : null
+      prevMarker  : prev,
+      nextMarker : next,
+      prevLine   : null,
+      nextLine   : null,
+      timeoutID  : null
     };
 
     if (this._waypoints._first === null && this._waypoints._last === null) {
@@ -221,7 +220,7 @@ L.Routing = L.Control.extend({
     this.routeWaypoint(marker, cb);
     this._waypoints.addLayer(marker);
     marker.dragging.enable();
-  }
+  },
 
   /**
    * Remove a waypoint from path
@@ -233,7 +232,7 @@ L.Routing = L.Control.extend({
    *
    * @return void
   */
-  ,removeWaypoint: function(marker, cb) {
+  removeWaypoint: function(marker, cb) {
     marker.off('mouseover', this._fireWaypointEvent, this);
     marker.off('mouseout' , this._fireWaypointEvent, this);
     marker.off('dragstart', this._fireWaypointEvent, this);
@@ -280,8 +279,7 @@ L.Routing = L.Control.extend({
       this._draw.enable();
       cb(null, null);
     }
-
-  }
+  },
 
   /**
    * Route with respect to waypoint
@@ -295,7 +293,7 @@ L.Routing = L.Control.extend({
    *
    * @todo add propper error checking for callback
   */
-  ,routeWaypoint: function(marker, cb) {
+  routeWaypoint: function(marker, cb) {
     var i = 0;
     var firstErr;
     var $this = this;
@@ -306,13 +304,13 @@ L.Routing = L.Control.extend({
         $this.fire('routing:routeWaypointEnd', { err: firstErr });
         cb(firstErr, marker);
       }
-    }
+    };
 
     this.fire('routing:routeWaypointStart');
 
     this._routeSegment(marker._routing.prevMarker, marker, callback);
     this._routeSegment(marker, marker._routing.nextMarker, callback);
-  }
+  },
 
   /**
    * Recalculate the complete route by routing each segment
@@ -325,7 +323,7 @@ L.Routing = L.Control.extend({
    *
    * @todo add propper error checking for callback
   */
-  ,rerouteAllSegments: function(cb) {
+  rerouteAllSegments: function(cb) {
     var numSegments = this.getWaypoints().length - 1;
     var callbackCount = 0;
     var firstErr;
@@ -351,7 +349,7 @@ L.Routing = L.Control.extend({
     this._eachSegment(function(m1, m2) {
       this._routeSegment(m1, m2, callback);
     });
-  }
+  },
 
   /**
    * Route segment between two markers
@@ -366,7 +364,7 @@ L.Routing = L.Control.extend({
    *
    * @todo logic if router fails
   */
-  ,_routeSegment: function(m1, m2, cb) {
+  _routeSegment: function(m1, m2, cb) {
     var $this = this;
 
     if (m1 === null || m2 === null) {
@@ -375,14 +373,14 @@ L.Routing = L.Control.extend({
 
     this._router(m1.getLatLng(), m2.getLatLng(), function(err, layer) {
       if (typeof layer === 'undefined') {
-        var layer = new L.Polyline([m1.getLatLng(), m2.getLatLng()], $this.options.styles.nodata);
+        layer = new L.Polyline([m1.getLatLng(), m2.getLatLng()], $this.options.styles.nodata);
       } else {
         layer.setStyle($this.options.styles.track);
       }
 
       layer._routing = {
-        prevMarker: m1
-        ,nextMarker: m2
+        prevMarker: m1,
+        nextMarker: m2
       };
 
       if (m1._routing.nextLine !== null) {
@@ -395,7 +393,7 @@ L.Routing = L.Control.extend({
 
       return cb(err, layer);
     });
-  }
+  },
 
   /**
    * Iterate over all segments and execute callback for each segment
@@ -407,7 +405,7 @@ L.Routing = L.Control.extend({
    *
    * @return void
   */
-  ,_eachSegment: function(callback, context) {
+  _eachSegment: function(callback, context) {
     var thisArg = context || this;
     var marker = this.getFirst();
 
@@ -422,7 +420,7 @@ L.Routing = L.Control.extend({
 
       marker = marker._routing.nextMarker;
     }
-  }
+  },
 
   /**
    * Fire events
@@ -433,20 +431,20 @@ L.Routing = L.Control.extend({
    *
    * @return void
   */
-  ,_fireWaypointEvent: function(e) {
+  _fireWaypointEvent: function(e) {
     this.fire('waypoint:' + e.type, {marker:e.target});
-  }
+  },
 
   /**
    *
   */
-  ,_fireSegmentEvent: function(e) {
+  _fireSegmentEvent: function(e) {
     if (e.type.split(':').length === 2) {
       this.fire(e.type);
     } else {
       this.fire('segment:' + e.type);
     }
-  }
+  },
 
   /**
    * Get first waypoint
@@ -455,9 +453,9 @@ L.Routing = L.Control.extend({
    *
    * @return L.Marker
   */
-  ,getFirst: function() {
+  getFirst: function() {
     return this._waypoints._first;
-  }
+  },
 
   /**
    * Get last waypoint
@@ -466,9 +464,9 @@ L.Routing = L.Control.extend({
    *
    * @return L.Marker
   */
-  ,getLast: function() {
+  getLast: function() {
     return this._waypoints._last;
-  }
+  },
 
   /**
    * Get all waypoints
@@ -477,7 +475,7 @@ L.Routing = L.Control.extend({
    *
    * @return <L.LatLng[]> all waypoints or empty array if none
   */
-  ,getWaypoints: function() {
+  getWaypoints: function() {
     var latLngs = [];
 
     this._eachSegment(function(m1) {
@@ -489,7 +487,7 @@ L.Routing = L.Control.extend({
     }
 
     return latLngs;
-  }
+  },
 
   /**
    * Concatenates all route segments to a single polyline
@@ -498,7 +496,7 @@ L.Routing = L.Control.extend({
    *
    * @return <L.Polyline> polyline, with empty _latlngs when no route segments
    */
-  ,toPolyline: function() {
+  toPolyline: function() {
     var latLngs = [];
 
     this._eachSegment(function(m1, m2, line) {
@@ -506,7 +504,7 @@ L.Routing = L.Control.extend({
     });
 
     return L.polyline(latLngs);
-  }
+  },
 
   /**
    * Export route to GeoJSON
@@ -518,7 +516,7 @@ L.Routing = L.Control.extend({
    * @return <object> GeoJSON object
    *
   */
-  ,toGeoJSON: function(enforce2d) {
+  toGeoJSON: function(enforce2d) {
     var geojson = {type: "LineString", properties: {waypoints: []}, coordinates: []};
     var current = this._waypoints._first;
 
@@ -553,8 +551,8 @@ L.Routing = L.Control.extend({
       current = current._routing.nextMarker;
     }
 
-    return geojson
-  }
+    return geojson;
+  },
 
   /**
    * Import route from GeoJSON
@@ -568,7 +566,7 @@ L.Routing = L.Control.extend({
    * @return undefined
    *
   */
-  ,loadGeoJSON: function(geojson, opts, cb) {
+  loadGeoJSON: function(geojson, opts, cb) {
     var $this, oldRouter, index, waypoints;
 
     $this = this;
@@ -576,7 +574,7 @@ L.Routing = L.Control.extend({
     // Check for optional options parameter
     if (typeof opts === 'function' || typeof opts === 'undefined') {
       cb = opts;
-      opts = {}
+      opts = {};
     }
 
     // Set default options
@@ -585,7 +583,7 @@ L.Routing = L.Control.extend({
 
     // Check for waypoints before processing geojson
     if (!geojson.properties || !geojson.properties.waypoints) {
-      if (!geojson.properties) { geojson.properties = {} };
+      if (!geojson.properties) { geojson.properties = {}; }
       geojson.properties.waypoints = [];
 
       for (var i = 0; i < geojson.coordinates.length; i = i + opts.waypointDistance) {
@@ -635,11 +633,11 @@ L.Routing = L.Control.extend({
 
         if (typeof cb === 'function') { cb(null); }
       }, 0);
-    }
+    };
 
     // Add waypoints
     add = function() {
-      if (!waypoints[index]) { return end() }
+      if (!waypoints[index]) { return end(); }
 
       var coords = waypoints[index].coordinates;
       var prev = $this._waypoints._last;
@@ -647,10 +645,10 @@ L.Routing = L.Control.extend({
       $this.addWaypoint(L.latLng(coords[1], coords[0]), prev, null, function(err, m) {
         add(++index);
       });
-    }
+    };
 
     add();
-  }
+  },
 
   /**
    * Start (or continue) drawing
@@ -664,9 +662,9 @@ L.Routing = L.Control.extend({
    *
    * @todo check enable
   */
-  ,draw: function (enable) {
+  draw: function (enable) {
     if (typeof enable === 'undefined') {
-      var enable = true;
+      enable = true;
     }
 
     if (enable) {
@@ -674,7 +672,7 @@ L.Routing = L.Control.extend({
     } else {
       this._draw.disable();
     }
-  }
+  },
 
   /**
    * Enable or disable routing
@@ -685,9 +683,9 @@ L.Routing = L.Control.extend({
    *
    * @todo check enable
   */
-  ,routing: function (enable) {
+  routing: function (enable) {
     throw new Error('Not implemented');
-  }
+  },
 
   /**
    * Enable or disable snapping
@@ -698,9 +696,9 @@ L.Routing = L.Control.extend({
    *
    * @todo check enable
   */
-  ,snapping: function (enable) {
+  snapping: function (enable) {
     throw new Error('Not implemented');
-  }
+  },
 
     /**
    * Key up listener
@@ -712,7 +710,7 @@ L.Routing = L.Control.extend({
    *
    * @return void
   */
-  ,_keyupListener: function (e) {
+  _keyupListener: function (e) {
     if (e.keyCode === this.options.shortcut.draw.disable) {
       this._draw.disable();
     } else if (e.keyCode === this.options.shortcut.draw.enable) {
