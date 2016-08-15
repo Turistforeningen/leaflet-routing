@@ -1,0 +1,26 @@
+{
+  "name": "leaflet-routing",
+  "version": "0.1.1",
+  "description": "A routing controller for the popular Leaflet mapping framework",
+  "main": "src/L.Routing.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Turistforeningen/leaflet-routing.git"
+  },
+  "keywords": [
+    "leaflet",
+    "routing"
+  ],
+  "author": "Den Norske Turistforening",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/Turistforeningen/leaflet-routing/issues"
+  },
+  "homepage": "https://github.com/Turistforeningen/leaflet-routing#readme"
+}
