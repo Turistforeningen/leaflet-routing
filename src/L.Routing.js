@@ -9,7 +9,6 @@
  *
  * @todo use L.Class.extend instead?
 */
-
 L.Routing = L.Control.extend({
 
   // INCLUDES
