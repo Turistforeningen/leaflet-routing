@@ -11,10 +11,10 @@
 L.Routing.Edit = L.Handler.extend({
 
   // INCLUDES
-  includes: [L.Mixin.Events]
+  includes: [L.Mixin.Events],
 
   // OPTIONS
-  ,options: {}
+  options: {},
 
   /**
    * Edit Constructor
@@ -28,14 +28,14 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @todo fetch last waypoint
   */
-  ,initialize: function (parent, options) {
+  initialize: function (parent, options) {
     this._parent = parent;
     this._map = parent._map;
 
     this._enabled = false;
 
     L.Util.setOptions(this, options);
-  }
+  },
 
   /**
    * Enable drawing
@@ -46,7 +46,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,enable: function() {
+  enable: function() {
     if (this._enabled) { return; }
 
     this._enabled = true;
@@ -54,7 +54,7 @@ L.Routing.Edit = L.Handler.extend({
     this.fire('enabled');
 
     this._map.fire('routing:edit-start');
-  }
+  },
 
   /**
    * Disable drawing
@@ -65,7 +65,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,disable: function() {
+  disable: function() {
     if (!this._enabled) { return; }
 
     this._enabled = false;
@@ -73,7 +73,7 @@ L.Routing.Edit = L.Handler.extend({
     this.fire('disabled');
 
     this._map.fire('routing:edit-end');
-  }
+  },
 
   /**
    * Add hooks
@@ -90,21 +90,21 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @todo hide and style the trailer!
   */
-  ,_addHooks: function() {
+  _addHooks: function() {
     if (!this._map) { return; }
 
     if (!this._mouseMarker) {
       this._mouseMarker = new L.Marker(this._map.getCenter(), {
         icon: L.divIcon({
-          className: 'line-mouse-marker'
-          ,iconAnchor: [5, 5]
-          ,iconSize: [10, 10]
-        })
-        ,clickable: true
-        ,draggable: true
-        ,opacity: 0
-        ,zIndexOffset: this.options.zIndexOffset
-        ,title: this.options.tooltips.segment
+          className: 'line-mouse-marker',
+          iconAnchor: [5, 5],
+          iconSize: [10, 10]
+        }),
+        clickable: true,
+        draggable: true,
+        opacity: 0,
+        zIndexOffset: this.options.zIndexOffset,
+        title: this.options.tooltips.segment
       });
     }
     this._mouseMarker.addTo(this._map);
@@ -128,7 +128,7 @@ L.Routing.Edit = L.Handler.extend({
     this._parent.on('waypoint:dragstart', this._waypointOnDragstart, this);
     this._parent.on('waypoint:drag'     , this._waypointOnDrag, this);
     this._parent.on('waypoint:dragend'  , this._waypointOnDragend, this);
-  }
+  },
 
   /**
    * Remove hooks
@@ -140,7 +140,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_removeHooks: function() {
+  _removeHooks: function() {
     if (!this._map) { return; }
 
     // this._trailer1.addTo(this._map);
@@ -155,7 +155,7 @@ L.Routing.Edit = L.Handler.extend({
     this._parent.off('waypoint:dragstart', this._waypointOnDragstart, this);
     this._parent.off('waypoint:drag'     , this._waypointOnDrag, this);
     this._parent.off('waypoint:dragend'  , this._waypointOnDragend, this);
-  }
+  },
 
   /**
    * Fired when the mouse first enters a segment
@@ -166,10 +166,10 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_segmentOnMouseover: function(e) {
+  _segmentOnMouseover: function(e) {
     this._mouseMarker.setOpacity(1.0);
     this._map.on('mousemove', this._segmentOnMousemove, this);
-  }
+  },
 
   /**
    * Fired when the mouse leaves a segement
@@ -180,14 +180,14 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_segmentOnMouseout: function(e) {
+  _segmentOnMouseout: function(e) {
     if (this._dragging) { return; }
 
     this._mouseMarker.setOpacity(0.0);
     this._map.off('mousemove', this._segmentOnMousemove, this);
 
     this.fire('segment:mouseout');
-  }
+  },
 
   /**
    * Fired when the mouse is moved
@@ -200,13 +200,13 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_segmentOnMousemove: function(e) {
+  _segmentOnMousemove: function(e) {
     if (this._dragging) { return; }
 
     var latlng = L.LineUtil.snapToLayers(e.latlng, null, {
-      layers: [this._parent._segments]
-      ,sensitivity: 40
-      ,vertexonly: false
+      layers: [this._parent._segments],
+      sensitivity: 40,
+      vertexonly: false
     });
 
     if (latlng._feature === null) {
@@ -215,7 +215,7 @@ L.Routing.Edit = L.Handler.extend({
       this._mouseMarker._snapping = latlng._feature._routing;
       this._mouseMarker.setLatLng(latlng);
     }
-  }
+  },
 
   /**
    * Mouse marker dragstart
@@ -226,7 +226,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_segmentOnDragstart: function(e) {
+  _segmentOnDragstart: function(e) {
     var latlng = e.target.getLatLng();
     var next = e.target._snapping.nextMarker;
     var prev = e.target._snapping.prevMarker;
@@ -235,7 +235,7 @@ L.Routing.Edit = L.Handler.extend({
 
     this._dragging = true;
     this.fire('segment:dragstart');
-  }
+  },
 
   /**
    * Fired when a marker is dragged
@@ -249,7 +249,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_segmentOnDrag: function(e) {
+  _segmentOnDrag: function(e) {
     var latlng = e.target.getLatLng();
     var next = e.target._snapping.nextMarker;
     var prev = e.target._snapping.prevMarker;
@@ -260,7 +260,7 @@ L.Routing.Edit = L.Handler.extend({
 
     e.target.setLatLng(latlng);
     this._setTrailers(latlng, next, prev);
-  }
+  },
 
   /**
    * Mouse marker dragend
@@ -271,7 +271,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_segmentOnDragend: function(e) {
+  _segmentOnDragend: function(e) {
     var next = this._mouseMarker._snapping.nextMarker;
     var prev = this._mouseMarker._snapping.prevMarker;
     var latlng = this._mouseMarker.getLatLng();
@@ -283,7 +283,7 @@ L.Routing.Edit = L.Handler.extend({
     this._dragging = false;
     this._setTrailers(null, null, null, false);
     this.fire('segment:dragend');
-  }
+  },
 
   /**
    * Fired when marker drag start
@@ -294,12 +294,12 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_waypointOnDragstart: function(e) {
+  _waypointOnDragstart: function(e) {
     var next = e.marker._routing.nextMarker;
     var prev = e.marker._routing.prevMarker;
 
     this._setTrailers(e.marker.getLatLng(), next, prev, true);
-  }
+  },
 
   /**
    * Fired while dragging marker
@@ -312,7 +312,7 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_waypointOnDrag: function(e) {
+  _waypointOnDrag: function(e) {
     var latlng = e.marker._latlng;
     var next = e.marker._routing.nextMarker;
     var prev = e.marker._routing.prevMarker;
@@ -323,7 +323,7 @@ L.Routing.Edit = L.Handler.extend({
 
     e.marker.setLatLng(latlng);
     this._setTrailers(latlng, next, prev);
-  }
+  },
 
   /**
    * Fired when marker drag ends
@@ -334,12 +334,12 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_waypointOnDragend: function(e) {
+  _waypointOnDragend: function(e) {
     this._setTrailers(null, null, null, false);
     this._parent.routeWaypoint(e.marker, function(err, data) {
       //console.log('_waypointOnDragend.cb', err, data);
     });
-  }
+  },
 
   /**
    * Fired when marker is clicked
@@ -353,17 +353,17 @@ L.Routing.Edit = L.Handler.extend({
    *
    * @return void
   */
-  ,_waypointOnClick: function(e) {
+  _waypointOnClick: function(e) {
     this._parent.removeWaypoint(e.layer, function(err, data) {
       //console.log('_waypointOnDragend.cb', err, data);
     });
-  }
+  },
 
   /**
    * Set trailing guide lines
    *
   */
-  ,_setTrailers: function(latlng, next, prev, show) {
+  _setTrailers: function(latlng, next, prev, show) {
     if (typeof show !== 'undefined') {
       if (show === false) {
         this._trailer1.setStyle({opacity: 0.0});
@@ -386,4 +386,3 @@ L.Routing.Edit = L.Handler.extend({
     }
   }
 });
-
