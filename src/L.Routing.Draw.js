@@ -100,7 +100,7 @@ L.Routing.Draw = L.Handler.extend({
         icon: (this.options.icons.draw ? this.options.icons.draw : new L.Icon.Default())
         ,opacity: (this.options.icons.draw ? 1.0 : 0.0)
         ,zIndexOffset: this.options.zIndexOffset
-        ,clickable: false
+        ,interactive: false
       });
     }
 
@@ -110,7 +110,7 @@ L.Routing.Draw = L.Handler.extend({
       this._trailerOpacity = this.options.styles.trailer.opacity || 0.2;
       var style = L.extend({}, this.options.styles.trailer, {
         opacity: 0.0
-        ,clickable: false
+        ,interactive: false
       });
       this._trailer = new L.Polyline([ll, ll], style);
     }

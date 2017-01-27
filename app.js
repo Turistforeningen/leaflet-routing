@@ -59,7 +59,7 @@ var routing, data;
     inport = new L.layerGroup(null, {
       style: {
         opacity:0.5
-        ,clickable:false
+        ,interactive:false
       }
     }).addTo(map);
 
@@ -67,7 +67,7 @@ var routing, data;
     snapping = new L.geoJson(null, {
       style: {
         opacity:0
-        ,clickable:false
+        ,interactive:false
       }
     }).addTo(map);
     map.on('moveend', function() {
@@ -172,7 +172,7 @@ var routing, data;
               data.coords[i] = new L.LatLng(data.coords[i].split(' ')[1], data.coords[i].split(' ')[0]);
             }
             inport.clearLayers();
-            var p = new L.Polyline(data.coords, {clickable:false, color: '#000000', opacity: 0.4});
+            var p = new L.Polyline(data.coords, {interactive:false, color: '#000000', opacity: 0.4});
             inport.addLayer(p);
             map.fitBounds(p.getBounds());
           }
