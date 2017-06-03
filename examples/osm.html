@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Load Leaflet Route</title>
-  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
-  <!--[if lte IE 8]><link rel="stylesheet" href="libs/leaflet/leaflet.ie.css" /><![endif]-->
-  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
   <link rel="stylesheet" href="http://simonwhitaker.github.io/github-fork-ribbon-css/gh-fork-ribbon.css" />
   <!--[if IE]><link rel="stylesheet" href="http://simonwhitaker.github.io/github-fork-ribbon-css/gh-fork-ribbon.ie.css" /><![endif]-->
 
@@ -26,11 +24,10 @@
   <div id="map"></div>
 
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-  <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
   <script src="../src/utils/LineUtil.Snapping.js"></script>
   <script src="../src/utils/Marker.Snapping.js"></script>
   <script src="../src/L.Routing.js"></script>
-  <script src="../src/L.Routing.Storage.js"></script>
   <script src="../src/L.Routing.Draw.js"></script>
   <script src="../src/L.Routing.Edit.js"></script>
   <script src="http://tyrasd.github.io/osmtogeojson/osmtogeojson.js"></script>
@@ -81,7 +78,7 @@
     snapping = new L.geoJson(null, {
       style: {
         opacity:0
-        ,clickable:false
+        ,interactive:false
       }
     }).addTo(map);
     map.on('moveend', function() {

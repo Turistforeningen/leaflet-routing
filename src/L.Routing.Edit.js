@@ -100,7 +100,7 @@ L.Routing.Edit = L.Handler.extend({
           ,iconAnchor: [5, 5]
           ,iconSize: [10, 10]
         })
-        ,clickable: true
+        ,interactive: true
         ,draggable: true
         ,opacity: 0
         ,zIndexOffset: this.options.zIndexOffset
@@ -112,7 +112,7 @@ L.Routing.Edit = L.Handler.extend({
     if (!this._trailer1) {
       var ll = this._map.getCenter();
       this._trailerOpacity = this.options.styles.trailer.opacity || 0.2;
-      var style = L.extend({}, this.options.styles.trailer, {opacity: 0.0,clickable: false});
+      var style = L.extend({}, this.options.styles.trailer, {opacity: 0.0,interactive: false});
       this._trailer1 = new L.Polyline([ll, ll], style);
       this._trailer2 = new L.Polyline([ll, ll], style);
     }
