@@ -18,6 +18,7 @@ Changelog
 
 * Default shortcut key for draw enable is `d`
 * Default shortcut key for draw disable is `q`
+* Remove unused L.Routing.Storage class
 
 ### 0.1.1 March 11, 2014
 
