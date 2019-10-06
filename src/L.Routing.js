@@ -186,6 +186,23 @@ L.Routing = L.Control.extend({
       ,timeoutID  : null
     };
 
+    var icons = this.options.icons;
+    if (!prev) {
+        marker.setIcon(icons.start);
+    } else if (!next) {
+        marker.setIcon(icons.end);
+    } else {
+        marker.setIcon(icons.normal);
+    }
+
+    if (this._waypoints._first && next && next._leaflet_id === this._waypoints._first._leaflet_id) {
+      next.setIcon(icons.normal);
+    }
+    if (this._waypoints._last && prev && prev._leaflet_id === this._waypoints._last._leaflet_id && prev._leaflet_id !== this._waypoints._first._leaflet_id) {
+      prev.setIcon(icons.normal);
+    }
+
+
     if (this._waypoints._first === null && this._waypoints._last === null) {
       this._waypoints._first = marker;
       this._waypoints._last = marker;
@@ -246,10 +263,12 @@ L.Routing = L.Control.extend({
 
     if (this._waypoints._first && marker._leaflet_id === this._waypoints._first._leaflet_id) {
       this._waypoints._first = next;
+      next.setIcon(this.options.icons.start);
     }
 
     if (this._waypoints._last && marker._leaflet_id === this._waypoints._last._leaflet_id) {
       this._waypoints._last = prev;
+      prev.setIcon(this.options.icons.end);
     }
 
     if (prev !== null) {
