@@ -34,12 +34,9 @@
     $.getJSON( "route.geojson", function( geojson ) {
       delete geojson.properties.waypoints;
 
-      var gk, topo;
-
-      gk = 'http://opencache.statkart.no/gatekeeper/gk';
-      topo = L.tileLayer(gk + '/gk.open_gmaps?layers=topo2&zoom={z}&x={x}&y={y}', {
+      const topo = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
         maxZoom: 16,
-        attribution: '<a href="http://www.statkart.no/">Statens kartverk</a>'
+        attribution: '<a href="https://carto.com/">Carto</a>'
       });
 
       map = new L.Map('map', {
